@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% if title %}
+        <title>{{title}}</title>
+    {% else %}
+        <title>Visualizador de Topicos</title>
+    {% endif %}
+</head>
+
+<body>
+<p>Navbar: 
+    <a href="{{url_for('topics')}}"> Topicos </a> |
+    <a href="{{url_for('vocabulary')}}"> Vocabulario </a>
+</p>
+{% block content %}{% endblock %}
+</body>
+
+</html>

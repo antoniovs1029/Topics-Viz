@@ -1,0 +1,6 @@
+/datos_prueba/*
+*.pc
+*.pyc
+*.pyo
+__pycache__/
+
