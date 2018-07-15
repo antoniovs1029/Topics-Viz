@@ -14,7 +14,7 @@ def hello():
 def topics():
     page = request.args.get('page', 1, type=int)
     topic_page = Topic.query.order_by(Topic.id).paginate(per_page = 50, page = page)
-    return render_template('topics.html', title="Topicos", tnum = Topic.query.count(), topic_page = topic_page) 
+    return render_template('topics.html', title="Topicos", topic_page = topic_page) 
 
 @app.route("/topics_all")
 def topics_all():
@@ -36,7 +36,7 @@ def word(word_id):
 def vocabulary():
     page = request.args.get('page', 1, type=int)
     vocab_page = Word.query.order_by(Word.id).paginate(per_page = 100, page = page)
-    return render_template('vocabulary.html', title= "Vocabulario", wnum = Word.query.count(), vocab_page = vocab_page)
+    return render_template('vocabulary.html', title= "Vocabulario", vocab_page = vocab_page)
 
 @app.route("/vocabulary_all")
 def vocabulary_all():
@@ -53,7 +53,7 @@ def search():
 
 @app.route("/search_result")
 def search_result():
-    searched = request.args.get('searched', '', type=str)
+    searched = request.args.get('searched', " ", type=str)
     look_for = '%{0}%'.format(searched) # para poder hacer la busqueda "LIKE %word%"
     word_list = Word.query.filter(Word.word_string.ilike(look_for))
 
