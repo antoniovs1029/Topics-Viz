@@ -3,9 +3,9 @@ from topics_viz.models import Word, Topic, Topic_Word_Association
 
 def load_word_list(file_path):
     with open(file_path, 'r') as fp:
-        for word in fp:
+        for i, word in enumerate(fp):
             word = word.split(" ")[0].strip('\n')
-            new_word = Word(word_string = word)
+            new_word = Word(id = i, word_string = word)
             db.session.add(new_word)
         db.session.commit()
 
@@ -13,7 +13,7 @@ def load_topics_distrib(file_path):
     with open(file_path, 'r') as fp:
         for i, line in enumerate(fp):
             print("Cargando topico: ", i)
-            new_topic = Topic(id = i + 1)
+            new_topic = Topic(id = i)
             db.session.add(new_topic)
             db.session.commit()
 
@@ -22,7 +22,7 @@ def load_topics_distrib(file_path):
                 word_id = int(word_id)
                 word_prob = float(word_prob)
 
-                new_assoc = Topic_Word_Association(topic_id = i + 1, word_id = word_id + 1, probability = word_prob)
+                new_assoc = Topic_Word_Association(topic_id = i, word_id = word_id, probability = word_prob)
 
                 db.session.add(new_assoc)
             db.session.commit()

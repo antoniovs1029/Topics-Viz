@@ -4,9 +4,9 @@
     Hay {{ tnum }} tópicos, que se enlistan a continuación...
 
     <ul>
-    {% for tlen, word_list in topic_list %}
-         <li> <a href="{{ url_for('topic', topic_id = loop.index)}}">Topico #{{ loop.index }} ( {{ tlen }} palabras )</a> : 
-        {% for elem in word_list %}
+    {% for topic in topic_list %}
+         <li> <a href="{{ url_for('topic', topic_id = topic.id)}}">Topico #{{ topic.id }} ( {{ topic.nwords }} palabras )</a> : 
+        {% for elem in topic.words[:5] %}
             {{ elem.word.word_string }} ,
         {% endfor %}
         ...
