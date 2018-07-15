@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1> Vocabulario </h1>
+    Vocabulario con {{ wnum }} palabras
+
+    <ul>
+    {% for elem in word_list %}
+        <li> <a href="{{ url_for('word', word_id = elem.id) }}"> {{ elem.word_string }} </a> 
+        ( en {{ elem.ntopics }} tópicos ) </li>
+    {% endfor %}
+    </ul>
+
+{% endblock content %}

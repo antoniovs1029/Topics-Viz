@@ -1,11 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1> Vocabulario </h1>
-    Vocabulario con {{ wnum }} palabras
+    Vocabulario con {{ vocab_page.total }} palabras. Se muestran {{ vocab_page.items.__len__() }} palabras en esta página. Dar click <a href = {{ url_for('vocabulary_all') }} > aqui </a> para ver una página que enlista todas las palabras (puede demorar en cargar).
+
+    <!-- Para imprimir botones de navegacion entre paginas-->
+    <p>
+    Navegar a Página:
+    {% for page_num in vocab_page.iter_pages(left_edge= 1, right_edge = 1, left_current = 3, right_current = 3 ) %}
+
+      {% if page_num %}
+        {% if vocab_page.page == page_num %} <!-- Si se trata del botón de la página actual -->
+          <a href="{{ url_for('vocabulary', page=page_num) }}"> {{ page_num }} </a> <!-- Asi se pasa un parametro a un request GET al url de 'home', con el nombre de parametro "page" con valor "page_num" -->
+        {% else %}
+          <a href="{{ url_for('vocabulary', page=page_num) }}"> {{ page_num }} </a>
+        {% endif %}
+
+      {% else %}
+        ... 
+      {% endif %}
+
+    {% endfor %}
+    </p>
+
 
     <ul>
-    {% for elem in word_list %}
-        <li> <a href="{{ url_for('word', word_id = elem.id) }}"> {{ elem.word_string }} </a> 
+    {% for elem in vocab_page.items %}
+        <li> #{{ elem.id }} : <a href="{{ url_for('word', word_id = elem.id) }}"> {{ elem.word_string }} </a> 
         ( en {{ elem.ntopics }} tópicos ) </li>
     {% endfor %}
     </ul>

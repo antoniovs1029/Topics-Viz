@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Topicos</h1>
+    Hay {{ tnum }} tópicos, que se enlistan a continuación...
+
+    <ul>
+    {% for topic in topic_list %}
+         <li> <a href="{{ url_for('topic', topic_id = topic.id)}}">Topico #{{ topic.id }} ( {{ topic.nwords }} palabras )</a> : 
+        {% for elem in topic.words[:5] %}
+            {{ elem.word.word_string }} ,
+        {% endfor %}
+        ...
+        </li>
+    {% endfor %}
+    </ul> 
+{% endblock content %}
+

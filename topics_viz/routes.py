@@ -12,21 +12,14 @@ def hello():
 
 @app.route("/topics")
 def topics():
-    MAX_WORDS = 5
-    topic_list = []
-    tnum = 0
+    page = request.args.get('page', 1, type=int)
+    topic_page = Topic.query.order_by(Topic.id).paginate(per_page = 50, page = page)
+    return render_template('topics.html', title="Topicos", tnum = Topic.query.count(), topic_page = topic_page) 
 
-    """
-    for t in Topic.query.all():
-        tnum += 1
-        tlen = t.nwords
-        word_list = sorted (t.words, key=lambda x: x.probability, reverse=True)
-        word_list = word_list[:min(len(word_list), MAX_WORDS)]
-        topic_list.append((tlen, word_list))
-    """
+@app.route("/topics_all")
+def topics_all():
     topic_list = Topic.query.all()
-
-    return render_template('topics.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list) 
+    return render_template('topics_all.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list) 
 
 @app.route("/topic/<int:topic_id>")
 def topic(topic_id):
@@ -41,10 +34,15 @@ def word(word_id):
 
 @app.route("/vocabulary")
 def vocabulary():
+    page = request.args.get('page', 1, type=int)
+    vocab_page = Word.query.order_by(Word.id).paginate(per_page = 100, page = page)
+    return render_template('vocabulary.html', title= "Vocabulario", wnum = Word.query.count(), vocab_page = vocab_page)
+
+@app.route("/vocabulary_all")
+def vocabulary_all():
     word_list = Word.query.order_by(Word.id)
     wnum = word_list.count()
-
-    return render_template('vocabulary.html', title= "Vocabulario", wnum = wnum, word_list = word_list)
+    return render_template('vocabulary_all.html', title= "Vocabulario", wnum = wnum, word_list = word_list)
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
