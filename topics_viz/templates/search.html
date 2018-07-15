@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div>
+    <form method="POST" action="">
+        {{ form.hidden_tag()}}
+        <fieldset>
+            <div>
+            {% if form.word.errors%}
+                {{ form.word() }}
+            {% else %}
+                {{ form.word() }}
+            {% endif %}
+
+            {{ form.submit()}}
+            
+                <div>
+                    {% for error in form.word.errors%}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+{% endblock content %}

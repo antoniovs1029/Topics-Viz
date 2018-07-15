@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+<p>Se han encontrado {{ wlen }} resultados para la palabra '{{ word }}'. Entre paréntesis se indica el número de tópicos en los que aparece cada palabra. </p>
+    <ul>
+    {% for elem in word_list %}
+        <li> <a href="{{ url_for('word', word_id = elem.id) }}"> {{ elem.word_string }} ({{ elem.ntopics }}) </a> </li>
+    {% endfor %}
+    </ul>
+{% endblock content %}

@@ -1,8 +1,10 @@
 import time
 
 from topics_viz import app, db
-from flask import render_template
+from flask import render_template, url_for, redirect, request
+
 from topics_viz.models import Topic, Word, Topic_Word_Association
+from topics_viz.forms import SearchForm
 
 @app.route("/")
 def hello():
@@ -39,6 +41,21 @@ def vocabulary():
     wnum = word_list.count()
 
     return render_template('vocabulary.html', title= "Vocabulario", wnum = wnum, word_list = word_list)
+
+@app.route("/search", methods=['GET', 'POST'])
+def search():
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect(url_for('search_result', word=form.word.data))
+    return render_template("search.html", form = form)
+
+@app.route("/search_result")
+def search_result():
+    w = request.args.get('word', '', type=str)
+    look_for = '%{0}%'.format(w) # para poder hacer la busqueda "LIKE %word%"
+    word_list = Word.query.filter(Word.word_string.ilike(look_for))
+
+    return render_template('search_result.html', word = w, word_list = word_list, wlen = word_list.count())
 
 if __name__ == '__main__':
     app.run(debug = True)
