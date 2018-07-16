@@ -8,16 +8,17 @@
         {{ form.hidden_tag()}}
         <fieldset>
             <div>
-            {% if form.word.errors%}
-                {{ form.word() }}
+            {{ form.searched.label() }}
+            {% if form.searched.errors%}
+                {{ form.searched() }}
             {% else %}
-                {{ form.word() }}
+                {{ form.searched() }}
             {% endif %}
 
-            {{ form.submit()}}
+            {{ form.submit(class="waves-effect waves-light btn-small")}}
             
                 <div>
-                    {% for error in form.word.errors%}
+                    {% for error in form.searched.errors%}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>

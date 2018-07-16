@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='materialize.min.css') }}">
+
     {% if title %}
         <title>{{title}}</title>
     {% else %}
@@ -9,12 +11,22 @@
 </head>
 
 <body>
-<p>Navbar: 
-    <a href="{{url_for('topics')}}"> Topicos </a> |
-    <a href="{{url_for('vocabulary')}}"> Vocabulario </a> |
-    <a href="{{url_for('search')}}"> Búsqueda </a>
-</p>
+
+<nav class="teal">
+<div class="nav-wrapper">
+  <!-- <a href="{{url_for('home')}}" class="brand-logo">Topics-viz</a> -->
+  <ul id="nav-mobile" class="left hide-on-med-and-down">
+    <li><a href="{{url_for('topics')}}">Tópicos</a></li>
+    <li><a href="{{url_for('vocabulary')}}">Vocabulario</a></li>
+    <li><a href="{{url_for('search')}}">Búsqueda</a></li>
+  </ul>
+</div>
+</nav>
+
+<div class="container">
 {% block content %}{% endblock %}
+</div>
+
 </body>
 
 </html>

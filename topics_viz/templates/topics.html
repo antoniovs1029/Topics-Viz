@@ -1,31 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Topicos</h1>
-    Hay {{ topic_page.total }} tópicos. Se muestran {{ topic_page.items.__len__() }} tópicos en esta página. Dar click <a href = {{ url_for('vocabulary_all') }} > aqui </a> para ver una página que enlista todos los tópicos (puede demorar en cargar).
+    <h1>Tópicos</h1>
+    Hay {{ results.total }} tópicos. Se muestran {{ results.items.__len__() }} tópicos en esta página. Dar click <a href = {{ url_for('topics_all') }} > aqui </a> para ver una página que enlista todos los tópicos (puede demorar en cargar).
 
-    <ul>
+    {% with content_2_link='topics' %}
+      {% include 'page_nav.html' %}
+    {% endwith %}
 
-    <!-- Para imprimir botones de navegacion entre paginas-->
-    <p>
-    Página:
-    {% for page_num in topic_page.iter_pages(left_edge= 1, right_edge = 1, left_current = 3, right_current = 3) %}
-
-      {% if page_num %}
-        {% if topic_page.page == page_num %} <!-- Si se trata del botón de la página actual -->
-          <a href="{{ url_for('topics', page=page_num) }}"> {{ page_num }} </a> <!-- Asi se pasa un parametro a un request GET al url de 'home', con el nombre de parametro "page" con valor "page_num" -->
-        {% else %}
-          <a href="{{ url_for('topics', page=page_num) }}"> {{ page_num }} </a>
-        {% endif %}
-
-      {% else %}
-        ... 
-      {% endif %}
-
-    {% endfor %}
-    </p>
-
-    {% for topic in topic_page.items %}
-         <li> <a href="{{ url_for('topic', topic_id = topic.id)}}">Topico #{{ topic.id }} ( {{ topic.nwords }} palabras )</a> : 
+    <ul class="collection">
+    {% for topic in results.items %}
+         <li class="collection-item"> <a href="{{ url_for('topic', topic_id = topic.id)}}">Topico #{{ topic.id }} ( {{ topic.nwords }} palabras )</a> : 
         {% for elem in topic.words[:5] %}
             {{ elem.word.word_string }} ,
         {% endfor %}

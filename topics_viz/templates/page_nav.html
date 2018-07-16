@@ -1,0 +1,22 @@
+<!-- Para implementar el navegador de páginas-->
+<!-- Es necesario que el objeto de paginacion se llame "results"-->
+
+<div>
+  <p> Navegar a Página: </p>
+  <ul class="pagination">
+  {% for page_num in results.iter_pages(left_edge= 1, right_edge = 1, left_current = 3, right_current = 3) %}
+
+    {% if page_num %}
+      {% if results.page == page_num %} <!-- Si se trata del botón de la página actual -->
+        <li class="active orange"> <a href="{{ url_for(content_2_link, page=page_num) }}"> {{ page_num }} </a> <!-- Asi se pasa un parametro a un request GET al url de 'home', con el nombre de parametro "page" con valor "page_num" --> </li>
+      {% else %}
+        <li class="waves-effect orange lighten-4"> <a href="{{ url_for(content_2_link, page=page_num) }}"> {{ page_num }} </a> </li>
+      {% endif %}
+
+    {% else %}
+      <li class="waves-effect"> ... </li> 
+    {% endif %}
+
+  {% endfor %}
+  </ul>
+</div>

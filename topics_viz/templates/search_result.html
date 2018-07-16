@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+<h1>Búsqueda: {{ searched }} </h1>
 <p>Se han encontrado {{ wlen }} resultados que incluyen la cadena '{{ searched }}'. Entre paréntesis se indica el número de tópicos en los que aparece la palabra. </p>
-    <ul>
+    <ul class="collection">
     {% for elem in word_list %}
-        <li> <a href="{{ url_for('word', word_id = elem.id) }}"> {{ elem.word_string }} ({{ elem.ntopics }}) </a> </li>
+        <a href="{{ url_for('word', word_id = elem.id) }}" class="collection-item"> {{ elem.word_string }} ({{ elem.ntopics }}) </a>
     {% endfor %}
     </ul>
 {% endblock content %}

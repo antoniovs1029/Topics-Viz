@@ -6,15 +6,18 @@ from flask import render_template, url_for, redirect, request
 from topics_viz.models import Topic, Word, Topic_Word_Association
 from topics_viz.forms import SearchForm
 
+
 @app.route("/")
-def hello():
-    return "Bienvenido al Topic Vizualizer"
+@app.route("/home")
+def home():
+    return redirect(url_for('topics'))
+
 
 @app.route("/topics")
 def topics():
     page = request.args.get('page', 1, type=int)
-    topic_page = Topic.query.order_by(Topic.id).paginate(per_page = 50, page = page)
-    return render_template('topics.html', title="Topicos", topic_page = topic_page) 
+    results = Topic.query.order_by(Topic.id).paginate(per_page = 50, page = page)
+    return render_template('topics.html', title="Topicos", results = results) 
 
 @app.route("/topics_all")
 def topics_all():
@@ -35,8 +38,8 @@ def word(word_id):
 @app.route("/vocabulary")
 def vocabulary():
     page = request.args.get('page', 1, type=int)
-    vocab_page = Word.query.order_by(Word.id).paginate(per_page = 100, page = page)
-    return render_template('vocabulary.html', title= "Vocabulario", vocab_page = vocab_page)
+    results = Word.query.order_by(Word.id).paginate(per_page = 100, page = page)
+    return render_template('vocabulary.html', title= "Vocabulario", results = results)
 
 @app.route("/vocabulary_all")
 def vocabulary_all():
@@ -48,7 +51,7 @@ def vocabulary_all():
 def search():
     form = SearchForm()
     if form.validate_on_submit():
-        return redirect(url_for('search_result', searched=form.word.data))
+        return redirect(url_for('search_result', searched=form.searched.data))
     return render_template("search.html", form = form)
 
 @app.route("/search_result")
