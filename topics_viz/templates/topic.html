@@ -1,17 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1> Topico # {{ topic_id }} </h1>
-<p> El topico contiene {{ word_list.__len__() }} palabras. Entre paréntesis se indica en cuántos tópicos (en total) aparece la palabra: </p>
- <table style="width:50%;">
-    <tr >
-        <th> Palabra </th>
-        <th> Probabilidad </th>
-    </tr>
-    {% for elem in word_list %}
-    <tr>
-        <td> <a href="{{ url_for('word', word_id = elem.word.id) }}"> {{ elem.word.word_string }} ({{ elem.word.ntopics }}) </a> </td>
-        <td> {{ "%.4f" | format(elem.probability) }} </td>
-    </tr>
-    {% endfor %}
- </table>
+<p> El topico contiene {{ nwords }} palabras.</p>
+
+    {{ table | safe }}
+    
 {% endblock content %}

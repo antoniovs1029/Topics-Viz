@@ -1,0 +1,10 @@
+<!-- Esta template es para hacer pruebas, mientras hago el desarrollo -->
+
+
+
+{% extends "layout.html" %}
+{% block content %}
+
+{{ v | safe }} <!-- No hace el escape HTML, por lo que imprime al HTML directamente el contenido de "v" -->
+
+{% endblock content %}

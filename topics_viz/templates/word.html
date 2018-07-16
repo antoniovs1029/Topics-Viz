@@ -2,18 +2,16 @@
 {% block content %}
     <h1> Palabra: {{ word.word_string }} </h1>
     <p> Esta palabra esta presente en {{ word.ntopics }} tópicos: </p>
-    <p>*Entre parentesis se muestra el número de palabras en el tópico*</p>
+    <p> *Entre parentesis se muestra el número de palabras en el tópico*</p>
 
  <table style="width:50%;">
     <tr>
         <th> Topico </th>
-        <th> Con Probabilidad </th>
     </tr>
 
     {% for elem in word.topics %}
     <tr>
         <td> <a href="{{url_for('topic', topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> ({{ elem.topic.nwords }})</td>
-        <td> {{ "%.4f" | format(elem.probability) }} </td>
     </tr>
     {% endfor %}
 
