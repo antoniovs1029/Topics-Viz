@@ -53,7 +53,7 @@ def topic(topic_id):
             table_elements[prob.word_id].append("{:.4f}".format(prob.probability))
 
 
-    table = create_HTML_table(table_headings, table_elements)
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
 
     return render_template('topic.html', title = "Topico #" + str(topic_id), topic_id= topic_id, 
         nwords = t.nwords, table = table)
@@ -89,12 +89,12 @@ def search_result():
     word_list = Word.query.filter(Word.word_string.ilike(look_for))
     return render_template('search_result.html', searched = searched, word_list = word_list, wlen = word_list.count())
 
-@app.route("/p")
-def p():
+@app.route("/ts<int:ts_id>/p")
+def p(ts_id):
     """
     Esto es solo para hacer pruebas ocasionales, mientras hago el desarrollo
     """
-    v = "<table style=''><tr><th>Uno</th><th>Dos</th></tr><tr><td>1</td><td>2</td></tr></table>"
+    v = "<table style=''><tr><th>+" + str(ts_id) + "</th><th>Dos</th></tr><tr><td>1</td><td>2</td></tr></table>"
     return render_template('p.html', v = v)
 
 if __name__ == '__main__':

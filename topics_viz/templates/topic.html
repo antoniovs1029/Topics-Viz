@@ -1,8 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1> Topico # {{ topic_id }} </h1>
-<p> El topico contiene {{ nwords }} palabras.</p>
+<!-- <head>
+<link rel="stylesheet" href= http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+</head> -->
+
+<h1> Tópico # {{ topic_id }} </h1>
+<p> El tópico contiene {{ nwords }} palabras. Dar click en el nombre de la columna, para ordenar los datos según ese campo</p>
 
     {{ table | safe }}
-    
+
+<!-- Para hacer que la tabla sea dinamica, se usa DataTables, una libreria de JS/JQuery-->
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='datatables.min.js') }}"></script>
+
+
+<!--
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+-->
+
+<script> 
+$(document).ready( function () {
+    $('#myTable').DataTable({
+        "paging": false,
+        "info": false,
+        "searching": false
+    });
+} );    
+</script>
+
 {% endblock content %}
