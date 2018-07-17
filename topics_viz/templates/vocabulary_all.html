@@ -1,13 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1> Vocabulario </h1>
-    Vocabulario con {{ wnum }} palabras
+    Vocabulario con {{ wnum }} palabras. Dar click en algún encabezado para ordenar los elementos según ese campo.
 
-    <ul>
-    {% for elem in word_list %}
-        <li> <a href="{{ url_for('word', word_id = elem.id) }}"> {{ elem.word_string }} </a> 
-        ( en {{ elem.ntopics }} tópicos ) </li>
-    {% endfor %}
-    </ul>
+    {{ table | safe }}
+
+    {% include 'interactive_table_import.html' %}
 
 {% endblock content %}

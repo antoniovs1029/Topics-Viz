@@ -22,15 +22,32 @@ def topics():
 
 @app.route("/topics_all")
 def topics_all():
-    topic_list = Topic.query.all()
-    return render_template('topics_all.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list) 
+    table_elements = dict()
+    table_headings = ['ID', 'No. Palabras', 'Palabras Ejemplo']
+    MAX_WORDS = 7
+
+    for topic in Topic.query.all():
+        table_elements[topic.id] = list()
+        topic_link = "<a href=\"" + url_for('topic', topic_id = topic.id) + "\">" \
+                        + str(topic.id) + "</a>"
+        table_elements[topic.id].append(topic_link)
+        table_elements[topic.id].append(topic.nwords)
+        word_list = ""
+        for word_assoc in topic.words[:MAX_WORDS]:
+            word_list += str(word_assoc.word.word_string) + ", "
+        word_list += "..."
+
+        table_elements[topic.id].append(word_list)
+    
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+
+    return render_template('topics_all.html', title="Topicos", tnum = len(table_elements), table = table) 
 
 """
-@app.route("/topic/<int:topic_id>")
-def topic(topic_id):
-    t = Topic.query.filter_by(id=topic_id).one()
-    word_list = sorted (t.words, key=lambda x: x.probability, reverse=True) # lista de objetos Topic_Word_Association ordenados por probabilidad
-    return render_template('topic.html', title = "Topico #" + str(topic_id), topic_id= topic_id, word_list = word_list)
+@app.route("/topics_all")
+def topics_all():
+    topic_list = Topic.query.all()
+    return render_template('topics_all.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list) 
 """
 
 @app.route("/topic/<int:topic_id>")
@@ -71,9 +88,27 @@ def vocabulary():
 
 @app.route("/vocabulary_all")
 def vocabulary_all():
+    table_headings = ['ID', 'Palabra', 'No. Tópicos']
+    table_elements = dict()
+    for word in Word.query:
+        table_elements[word.id] = list()
+        id_link = "<a href=\"" + url_for('word', word_id = word.id) + "\">" \
+                    + str(word.id)+ "</a>"
+        table_elements[word.id].append(id_link)
+        table_elements[word.id].append(word.word_string)
+        table_elements[word.id].append(word.ntopics)
+
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    
+    return render_template('vocabulary_all.html', title= "Vocabulario", wnum = len(table_elements), table = table)
+
+"""
+@app.route("/vocabulary_all")
+def vocabulary_all():
     word_list = Word.query.order_by(Word.id)
     wnum = word_list.count()
     return render_template('vocabulary_all.html', title= "Vocabulario", wnum = wnum, word_list = word_list)
+"""
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():

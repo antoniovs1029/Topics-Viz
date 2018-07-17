@@ -1,0 +1,23 @@
+<!-- Para hacer que la tabla sea dinamica, se usa DataTables, una libreria de JS/JQuery-->
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='datatables.min.js') }}"></script>
+
+
+<!--
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+-->
+
+<script> 
+$(document).ready( function () {
+    $('#myTable').DataTable({
+        "paging": false,
+        "info": false,
+        "searching": false
+    });
+} );    
+</script>
