@@ -10,8 +10,8 @@ def load_word_list(file_path):
             db.session.add(new_word)
         db.session.commit()
 
-def load_first_topics_distrib(file_path):
-    tdis = Topic_Distribution()
+def load_first_topics_distrib(file_path, name):
+    tdis = Topic_Distribution(name = name)
     db.session.add(tdis)
     db.session.commit()
 
@@ -64,7 +64,7 @@ def load_topics_distrib(file_path, name):
 
     # @TODO: Comprobar que la distribucion ingresada sea valida, en que las tuplas (word, topic) que usa realmente sean válidas
     # En la implementacion actual si se meten datos erroneos, no avisa... y al generar la pagina del topico, explota
-    
+
 def clear_data(session = db.session):
     meta = db.metadata
     for table in reversed(meta.sorted_tables):

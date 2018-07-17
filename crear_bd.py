@@ -1,3 +1,8 @@
+"""
+Para eliminar las tablas existentes en la BD y crear las tablas dispuestas en
+los modelos. Las nuevas tablas se encuentran vacias.
+"""
+
 from topics_viz import db
 db.reflect()
 db.drop_all()
