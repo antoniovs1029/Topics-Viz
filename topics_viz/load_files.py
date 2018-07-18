@@ -1,6 +1,5 @@
 from topics_viz import db
-from topics_viz.models import (Word, Topic, Topic_Word_Association,
-                                    Topic_Distribution, Probability)
+from topics_viz.models import *
 
 def load_word_list(file_path):
     with open(file_path, 'r') as fp:
@@ -11,8 +10,8 @@ def load_word_list(file_path):
         db.session.commit()
 
 def load_first_topics_distrib(file_path, name):
-    tdis = Topic_Distribution(name = name)
-    db.session.add(tdis)
+    twdis = TopicWordDistribution(name = name)
+    db.session.add(twdis)
     db.session.commit()
 
     with open(file_path, 'r') as fp:
@@ -22,19 +21,19 @@ def load_first_topics_distrib(file_path, name):
             db.session.add(new_topic)
 
             for elem in line.split(" ")[1:]:
-                word_id, word_prob = tuple(elem.split(":"))
+                word_id, word_val = tuple(elem.split(":"))
                 word_id = int(word_id)
-                word_prob = float(word_prob)
-                new_assoc = Topic_Word_Association(topic_id = i, word_id = word_id)
-                new_prob = Probability(topic_id = i, word_id = word_id, tdis_id = tdis.id, probability = word_prob)
+                word_val = float(word_val)
+                new_assoc = TopicWordAssociation(topic_id = i, word_id = word_id)
+                new_val = TopicWordValue(topic_id = i, word_id = word_id, twdis_id = twdis.id, value = word_val)
                 db.session.add(new_assoc)
-                db.session.add(new_prob)
+                db.session.add(new_val)
 
                 # new_topic.nwords += 1 # No puedo hacer esto pues no he hecho commit del objeto
                 # Word.query.filter_by(id = word_id).one().ntopics += 1 # esto tambien alenta el ciclo... me pregunto si habra alguna manera mas rapida de hacerlo!
 
-    db.session.commit() # @TODO: No se si meter esto dentro del ciclo, pero al sacarlo, realiza sus operaciones demasiado rapido
-
+            if i % 100 == 0:
+                db.session.commit() # @TODO: No se cada cuanto hacerlo. Ya que al hacerlo mas frecuentemente si se tarda mas.
 
     print("Actualizando Topicos")
     for t in Topic.query.all():
@@ -47,19 +46,19 @@ def load_first_topics_distrib(file_path, name):
     db.session.commit()
 
 def load_topics_distrib(file_path, name):
-    tdis = Topic_Distribution(name = name)
-    db.session.add(tdis)
+    print("Cargando distrib", name)
+    twdis = TopicWordDistribution(name = name)
+    db.session.add(twdis)
     db.session.commit()
 
-    with open(file_path, 'r') as fp:
+    with open(file_path) as fp:
         for topic_id, line in enumerate(fp):
             for elem in line.split(" ")[1:]:
-                word_id, word_prob = tuple(elem.split(":"))
+                word_id, word_val = tuple(elem.split(":"))
                 word_id = int(word_id)
-                word_prob = float(word_prob)
-                new_prob = Probability(topic_id = topic_id, word_id = word_id, tdis_id = tdis.id, probability = word_prob)
-                db.session.add(new_prob)
-
+                word_val = float(word_val)
+                new_val = TopicWordValue(topic_id = topic_id, word_id = word_id, twdis_id = twdis.id, value = word_val)
+                db.session.add(new_val)
     db.session.commit()
 
     # @TODO: Comprobar que la distribucion ingresada sea valida, en que las tuplas (word, topic) que usa realmente sean válidas

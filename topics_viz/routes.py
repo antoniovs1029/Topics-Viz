@@ -3,7 +3,12 @@ import time
 from topics_viz import app, db
 from flask import render_template, url_for, redirect, request
 
-from topics_viz.models import Topic, Word, Topic_Word_Association, Topic_Distribution, Probability
+from topics_viz.models import (Topic,
+                                Word,
+                TopicWordAssociation,
+                TopicWordDistribution,
+                TopicWordValue)
+
 from topics_viz.forms import SearchForm
 from topics_viz.templates_python import create_HTML_table
 
@@ -18,7 +23,7 @@ def home():
 def topics():
     page = request.args.get('page', 1, type=int)
     results = Topic.query.order_by(Topic.id).paginate(per_page = 50, page = page)
-    return render_template('topics.html', title="Topicos", results = results) 
+    return render_template('topics.html', title="Topicos", results = results)
 
 @app.route("/topics_all")
 def topics_all():
@@ -38,16 +43,16 @@ def topics_all():
         word_list += "..."
 
         table_elements[topic.id].append(word_list)
-    
+
     table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
 
-    return render_template('topics_all.html', title="Topicos", tnum = len(table_elements), table = table) 
+    return render_template('topics_all.html', title="Topicos", tnum = len(table_elements), table = table)
 
 """
 @app.route("/topics_all")
 def topics_all():
     topic_list = Topic.query.all()
-    return render_template('topics_all.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list) 
+    return render_template('topics_all.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list)
 """
 
 @app.route("/topic/<int:topic_id>")
@@ -64,15 +69,15 @@ def topic(topic_id):
         table_elements[word_assoc.word.id].append(word_assoc.word.word_string)
         table_elements[word_assoc.word.id].append(word_assoc.word.ntopics)
 
-    for tdis in Topic_Distribution.query.all():
-        table_headings.append(tdis.name)
-        for prob in Probability.query.filter_by(tdis_id = tdis.id, topic_id = topic_id).all():
-            table_elements[prob.word_id].append("{:.4f}".format(prob.probability))
+    for twdis in TopicWordDistribution.query.all():
+        table_headings.append(twdis.name)
+        for v in TopicWordValue.query.filter_by(twdis_id = twdis.id, topic_id = topic_id).all():
+            table_elements[v.word_id].append("{:.4f}".format(v.value))
 
 
     table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
 
-    return render_template('topic.html', title = "Topico #" + str(topic_id), topic_id= topic_id, 
+    return render_template('topic.html', title = "Topico #" + str(topic_id), topic_id= topic_id,
         nwords = t.nwords, table = table)
 
 @app.route("/word/<int:word_id>")
@@ -99,7 +104,7 @@ def vocabulary_all():
         table_elements[word.id].append(word.ntopics)
 
     table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
-    
+
     return render_template('vocabulary_all.html', title= "Vocabulario", wnum = len(table_elements), table = table)
 
 """
