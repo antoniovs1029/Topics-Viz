@@ -1,1 +1,1 @@
-Escrito en Python 2.6
+Escrito en Python 3.6

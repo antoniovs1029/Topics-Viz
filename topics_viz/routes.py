@@ -80,6 +80,11 @@ def topic(topic_id):
     return render_template('topic.html', title = "Topico #" + str(topic_id), topic_id= topic_id,
         nwords = t.nwords, table = table)
 
+@app.route("/distributions")
+def distributions():
+    distribs = TopicWordDistribution.query.all()
+    return render_template('distributions.html', title = "Distribuciones", distribs = distribs)
+
 @app.route("/word/<int:word_id>")
 def word(word_id):
     w = Word.query.filter_by(id=word_id).one()
