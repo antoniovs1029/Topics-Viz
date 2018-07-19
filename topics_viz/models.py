@@ -1,4 +1,20 @@
+"""
+Aqui se definen las tablas de la base de datos, utilizando Flask-SQLAlchemy.
+
+NOTA: al trabajar con llaves primarias compuestas, no es posible autoincrementar
+el indice en SQLite, por lo que es necesario disponerla al crear un registro.
+"""
+
 from topics_viz import db
+
+class TopicSet(db.Model):
+    """
+    Cada registro se refiere a la existencia de un conjunto de tópicos
+    """
+    __tablename__ = 'topic_set'
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), default = "Empty Name")
+    description = db.Column(db.Text, default = "Empty Description")
 
 class Topic(db.Model):
     """
@@ -10,6 +26,7 @@ class Topic(db.Model):
     """
     __tablename__ = 'topic'
     id = db.Column(db.Integer, primary_key=True)
+    topicset_id = db.Column(db.Integer, db.ForeignKey('topic_set.id'), primary_key = True)
     words = db.relationship('TopicWordAssociation', back_populates='topic')
     nwords = db.Column(db.Integer, default=0) # Se tiene que actualizar manualmente # @TODO: ver si hay alguna manera de auto-actualizar esto
 
@@ -29,8 +46,7 @@ class Word(db.Model):
     __tablename__ = 'word'
     id = db.Column(db.Integer, primary_key=True)
     word_string = db.Column(db.String(20))
-    ntopics = db.Column(db.Integer, default=0) # Se tiene que actualizar manualmente # @TODO: ver si hay alguna manera de auto-actualizar esto
-    topics = db.relationship('TopicWordAssociation', back_populates='word')
+    topics = db.relationship('TopicWordAssociation', back_populates='word') # Debido al diseño de la Base de Datos, esta lista contiene a todos los topicos en los que aparece la palabra, sin importar el topicset
 
     def __repr__(self):
         return '(Word ' + str(self.id) + ' : )'
@@ -50,15 +66,39 @@ class TopicWordAssociation(db.Model):
     - topic_id y word_id son los registros que relaciona.
     """
     __tablename__ = 'topic_word_association'
-    topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), primary_key=True)
+    topicset_id = db.Column(db.Integer, primary_key=True)
+    topic_id = db.Column(db.Integer, primary_key=True)
     word_id = db.Column(db.Integer, db.ForeignKey('word.id'), primary_key=True)
-#   probability = db.Column(db.Float, nullable=False)
     word = db.relationship('Word', back_populates='topics')
     topic = db.relationship('Topic', back_populates='words')
-    # probabilities = db.relationship('TopicWordValue', back_populates='twa')
+    __table_args__ = (
+        db.ForeignKeyConstraint(['topicset_id', 'topic_id'], ['topic.topicset_id', 'topic.id']), {}
+        ) # Foreign Key a llave compuesta, según: https://stackoverflow.com/questions/7504753/relations-on-composite-keys-using-sqlalchemy
+
 
     def __repr__(self):
         return '(T: ' + str(self.topic_id) + ', W: ' + str(self.word_id) + ')'
+
+class WordTopicsNumber(db.Model):
+    """
+    Cada registro indica a cuantos topicos se relaciona una palabra, en un TopicSet
+    dado. Aunque esta operacion podria realizarse usando "count()" o "len()" en
+    la tabla de TopicWordAssociation, resulta mas eficiente guardar la informacion
+    de manera independiente en la BD ya que es una informacion que se consulta mucho
+    en la app.
+
+    Sin embargo, la desventaja es que esta tabla DEBE de ser mantenida manualmente.
+    En caso de no actualizarse manualmente, entonces suceden errores.
+    """
+    __tablename__ = 'word_topics_number'
+    topicset_id = db.Column(db.Integer, db.ForeignKey('topic_set.id'), primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey('word.id'), primary_key=True)
+    ntopics = db.Column(db.Integer, default=0)
+    word = db.relationship('Word') # Para acceder a la palabra con la que se relaciona mas rapidamente
+
+    def __repr__(self):
+        return '(TS: ' + str(self.topicset_id) + ', W: ' + str(self.word_id) + ', Ntopics: ' + str(self.ntopics) + ')'
+
 
 class TopicWordDistribution(db.Model):
     """
@@ -76,6 +116,7 @@ class TopicWordDistribution(db.Model):
     """
     __tablename__ = 'topic_word_distribution'
     id = db.Column(db.Integer, primary_key = True)
+    topicset_id = db.Column(db.Integer, db.ForeignKey('topic_set.id'), primary_key=True)
     name = db.Column(db.String(20), default = "Empty Name")
     description = db.Column(db.Text, default = "Empty Description")
 
@@ -94,12 +135,22 @@ class TopicWordValue(db.Model):
     sario.
     """
     __tablename__ = 'topic_word_value'
+    topicset_id = db.Column(db.Integer, primary_key = True)
     topic_id = db.Column(db.Integer, primary_key=True)
     word_id = db.Column(db.Integer, primary_key=True)
-    twdis_id = db.Column(db.Integer, db.ForeignKey('topic_word_distribution.id'), primary_key = True)
-    __table_args__ = (db.ForeignKeyConstraint(['topic_id', 'word_id'], ['topic_word_association.topic_id', 'topic_word_association.word_id']), {}) # Foreign Key a llave compuesta, según: https://stackoverflow.com/questions/7504753/relations-on-composite-keys-using-sqlalchemy
+    twdis_id = db.Column(db.Integer, primary_key = True)
     value = db.Column(db.Float, nullable=False)
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['topicset_id', 'topic_id', 'word_id'],
+            ['topic_word_association.topicset_id','topic_word_association.topic_id', 'topic_word_association.word_id']
+            ),
+        db.ForeignKeyConstraint(
+            ['topicset_id', 'twdis_id'],
+            ['topic_word_distribution.topicset_id', 'topic_word_distribution.id']
+            ), {}
+        )
     # twa = db.relationship('TopicWordAssociation', back_populates='probabilities')
 
     def __repr__(self):
-        return '(TWDis: ' + str(self.twdis_id) + ', T: ' + str(self.topic_id) + ', W: ' + str(self.word_id) + ', P: ' + str(self.probability) + ')'
+        return '(TWDis: ' + str(self.twdis_id) + ', T: ' + str(self.topic_id) + ', W: ' + str(self.word_id) + ', V: ' + str(self.probability) + ')'

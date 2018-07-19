@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1> Palabra: {{ word.word_string }} </h1>
-    <p> Esta palabra esta presente en {{ word.ntopics }} tópicos: </p>
+    <p> Esta palabra esta presente en {{ topics_associations | length }} tópicos: </p>
     <p> *Entre parentesis se muestra el número de palabras en el tópico*</p>
 
  <table style="width:50%;">
@@ -9,9 +9,9 @@
         <th> Topico </th>
     </tr>
 
-    {% for elem in word.topics %}
+    {% for elem in topics_associations %}
     <tr>
-        <td> <a href="{{url_for('topic', topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> ({{ elem.topic.nwords }})</td>
+        <td> <a href="{{url_for('topic', ts_id = ts_id, topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> ({{ elem.topic.nwords }})</td>
     </tr>
     {% endfor %}
 </table>

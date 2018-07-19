@@ -1,15 +1,30 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1> Distribuciones </h1>
+<h1 class="center-align">
+  Distribuciones
+</h1>
 <div>
-<h2 class = "center-align"> Distribuciones Tópico-Palabra </h2>
+  <h3> Distribuciones Tópico-Palabra </h3>
+</div>
+
+
   {%  for distrib in distribs %}
   <ul class="collection">
-    <li class="collection-item orange ">
-      <h5> ID # {{distrib.id}} : "{{distrib.name}}" </h5>
+    <li class="collection-item orange white-text">
+      <h5> ID #{{distrib.id}} : "{{distrib.name}}" </h5>
       <p> {{distrib.description}} </p>
     </li>
   </ul>
   {% endfor %}
+
+
+<!--
+{%  for distrib in distribs %}
+<div class = "orange">
+    <h5> ID #{{distrib.id}} : "{{distrib.name}}" </h5>
+    <p> {{distrib.description}} </p>
 </div>
+{% endfor %}
+-->
+
 {% endblock content %}

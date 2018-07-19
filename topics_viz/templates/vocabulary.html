@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1> Vocabulario </h1>
-    Vocabulario con {{ results.total }} palabras. Se muestran {{ results.items.__len__() }} palabras en esta página. Dar click <a href = {{ url_for('vocabulary_all') }} > aqui </a> para ver una página que enlista todas las palabras (puede demorar en cargar).
+    Vocabulario con {{ results.total }} palabras. Se muestran {{ results.items | length}} palabras en esta página. Dar click <a href = {{ url_for('vocabulary_all', ts_id = ts_id) }} > aqui </a> para ver una página que enlista todas las palabras (puede demorar en cargar).
 
     {% with content_2_link='vocabulary' %}
       {% include 'page_nav.html' %}
     {% endwith %}
 
     <ul>
-    {% for word in results.items %}
-        <li> #{{ word.id }} : <a href="{{ url_for('word', word_id = word.id) }}"> {{ word.word_string }} </a> 
-        ( en {{ word.ntopics }} tópicos ) </li>
+    {% for elem in results.items %}
+        <li> #{{ elem.word_id }} : <a href="{{ url_for('word', ts_id = ts_id, word_id = elem.word_id) }}"> {{ elem.word.word_string }} </a>
+        ( en {{ elem.ntopics | int }} tópicos ) </li>
     {% endfor %}
     </ul>
 

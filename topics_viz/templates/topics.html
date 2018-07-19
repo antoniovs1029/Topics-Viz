@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Tópicos</h1>
-    Hay {{ results.total }} tópicos. Se muestran {{ results.items.__len__() }} tópicos en esta página. Dar click <a href = {{ url_for('topics_all') }} > aqui </a> para ver una página que enlista todos los tópicos (puede demorar en cargar).
+    Hay {{ results.total }} tópicos. Se muestran {{ results.items.__len__() }} tópicos en esta página. Dar click <a href = {{ url_for('topics_all', ts_id = ts_id) }} > aqui </a> para ver una página que enlista todos los tópicos (puede demorar en cargar).
 
     {% with content_2_link='topics' %}
       {% include 'page_nav.html' %}
@@ -9,12 +9,12 @@
 
     <ul class="collection">
     {% for topic in results.items %}
-         <li class="collection-item"> <a href="{{ url_for('topic', topic_id = topic.id)}}">Topico #{{ topic.id }} ( {{ topic.nwords }} palabras )</a> : 
+         <li class="collection-item"> <a href="{{ url_for('topic', ts_id = ts_id, topic_id = topic.id)}}">Topico #{{ topic.id }} ( {{ topic.nwords }} palabras )</a> :
         {% for elem in topic.words[:5] %}
             {{ elem.word.word_string }} ,
         {% endfor %}
         ...
         </li>
     {% endfor %}
-    </ul> 
+    </ul>
 {% endblock content %}
