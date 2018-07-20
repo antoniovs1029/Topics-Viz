@@ -7,6 +7,15 @@ el indice en SQLite, por lo que es necesario disponerla al crear un registro.
 
 from topics_viz import db
 
+class Corpus(db.Model):
+    """
+    Tabla para mantener un solo registro sobre el Corpus
+    """
+    __tablename__ = 'corpus'
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), default = "Empty Name")
+    description = db.Column(db.Text, default = "Empty Description")    
+
 class TopicSet(db.Model):
     """
     Cada registro se refiere a la existencia de un conjunto de tópicos

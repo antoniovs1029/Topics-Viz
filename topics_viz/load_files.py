@@ -1,6 +1,11 @@
 from topics_viz import db
 from topics_viz.models import *
 
+def info_corpus(name, description):
+    c = Corpus(name = name, description = description)
+    db.session.add(c)
+    db.session.commit()
+
 def load_word_list(file_path):
     with open(file_path, 'r') as fp:
         for i, word in enumerate(fp):

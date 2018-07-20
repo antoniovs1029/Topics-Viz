@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='materialize.min.css') }}">
+
+    {% if title %}
+        <title>{{title}}</title>
+    {% else %}
+        <title>Visualizador de Topicos</title>
+    {% endif %}
+</head>
+
+<body>
+
+<nav>
+  <div class="nav-wrapper orange">
+    <a href="{{url_for('home')}}" class="brand-logo center">Corpus: {{corpus.name}}</a>
+  </div>
+</nav>
+
+<div class="container">
+  <p> {{corpus.description}} </p>
+  <p> A continuación se enlistan los {{topic_sets.count()}} topicsets cargados del corpus.  </p>
+
+  <div class="collection">
+  {% for ts in topic_sets %}
+        <a class="collection-item" href="{{url_for('topics_home', ts_id = ts.id)}}"> <h5> ID#{{ts.id}}: {{ts.name}}</h5>
+        <p> {{ts.description}} </p> </a>
+
+  {% endfor %}
+</div>
+</div>
+
+<div style="height:100px"></div>
+
+</body>
+</html>

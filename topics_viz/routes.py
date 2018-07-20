@@ -11,7 +11,12 @@ from topics_viz.templates_python import create_HTML_table
 @app.route("/")
 @app.route("/home")
 def home():
-    return redirect(url_for('topics', ts_id = 1))
+    c = Corpus.query.first()
+    return render_template('home.html', title="Topics-Viz", corpus = c, topic_sets = TopicSet.query)
+
+@app.route("/ts<int:ts_id>/topics/home")
+def topics_home(ts_id):
+    return redirect(url_for('topics', ts_id = ts_id))
 
 @app.route("/ts<int:ts_id>/topics")
 def topics(ts_id):
@@ -27,7 +32,7 @@ def topics_all(ts_id):
     table_headings = ['ID', 'No. Palabras', 'Palabras Ejemplo']
     MAX_WORDS = 7
 
-    for topic in Topic.query.filter_by(topicset_id = tset.id).all():
+    for topic in Topic.query.filter_by(topicset_id = tset.id):
         table_elements[topic.id] = list()
         topic_link = "<a href=\"" + url_for('topic', ts_id = tset.id, topic_id = topic.id) + "\">" \
                         + str(topic.id) + "</a>"
