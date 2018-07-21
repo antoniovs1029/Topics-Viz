@@ -1,0 +1,15 @@
+{% block head %}
+{% include 'plots/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block content %}
+<h1>Resumen:</h1>
+<h3>Distribución "{{twdis.name}}"</h3>
+
+<p>A continuación se grafica el máximo, mínimo y promedio de la distribución "{{twdis.name}}" en cada tópico:</p>
+{{ div|safe }}
+
+{{ script|safe }}
+
+{% endblock content %}

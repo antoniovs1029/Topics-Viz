@@ -1,0 +1,17 @@
+{% block head %}
+{% include 'plots/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block content %}
+<h1>Palabras - # Tópicos </h1>
+
+<p>A continuación se grafica la relación entre las palabras y el número de tópicos en los que aparecen</p>
+{{ div|safe }}
+
+<p> A continuación se grafica el histograma del # de tópicos en los que aparecen las palabras. </p>
+{{ div2|safe }}
+
+{{ script|safe }}
+
+{% endblock content %}

@@ -5,10 +5,6 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1>Tópicos - # Palabras </h1>
-<div style="border: 1px solid black;">
-  <a href="{{url_for('plots', ts_id = ts_id)}}">Plots</a>
-  > "Tópicos - # Palabras"
-</div>
 
 <p>A continuación se grafica la relación entre los tópicos y el número de palabras que contienen</p>
 {{ div|safe }}
