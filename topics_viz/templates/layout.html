@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='materialize.min.css') }}">
-
+    {% block head %}{% endblock %}
     {% if title %}
         <title>{{title}}</title>
     {% else %}
@@ -17,11 +17,12 @@
   <!-- <a href="{{url_for('home')}}" class="brand-logo">Topics-viz</a> -->
   <ul id="nav-mobile" class="left hide-on-med-and-down">
     <li class="blue"><a href="{{url_for('home')}}">Inicio</a></li>
-    <li class="red"><a href="#">Topic Set #{{ts_id}}</a></li>
+    <li class="red"><a href="{{url_for('home')}}">Topic Set #{{ts_id}}</a></li>
     <li><a href="{{url_for('topics', ts_id = ts_id)}}">Tópicos</a></li>
     <li><a href="{{url_for('vocabulary', ts_id = ts_id)}}">Vocabulario</a></li>
     <li><a href="{{url_for('distributions', ts_id = ts_id)}}">Distribuciones</a></li>
     <li><a href="{{url_for('search', ts_id = ts_id)}}">Búsqueda</a></li>
+    <li><a href="{{url_for('plots', ts_id = ts_id)}}">Plots</a></li>
 </div>
 </nav>
 

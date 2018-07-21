@@ -14,6 +14,7 @@ def home():
     c = Corpus.query.first()
     return render_template('home.html', title="Topics-Viz", corpus = c, topic_sets = TopicSet.query)
 
+@app.route("/ts<int:ts_id>")
 @app.route("/ts<int:ts_id>/topics/home")
 def topics_home(ts_id):
     return redirect(url_for('topics', ts_id = ts_id))
@@ -163,14 +164,6 @@ def search_result(ts_id):
     look_for = '%{0}%'.format(searched) # para poder hacer la busqueda "LIKE %word%"
     word_list = Word.query.filter(Word.word_string.ilike(look_for))
     return render_template('search_result.html', ts_id = tset.id, searched = searched, word_list = word_list, wlen = word_list.count())
-
-@app.route("/ts<int:ts_id>/p")
-def p(ts_id):
-    """
-    Esto es solo para hacer pruebas ocasionales, mientras hago el desarrollo
-    """
-    v = "<table style=''><tr><th>+" + str(ts_id) + "</th><th>Dos</th></tr><tr><td>1</td><td>2</td></tr></table>"
-    return render_template('p.html', v = v)
 
 if __name__ == '__main__':
     app.run(debug = True)

@@ -1,6 +1,5 @@
-<!-- Esta template es para hacer pruebas, mientras hago el desarrollo -->
-
-{% block head %}
+<html>
+<head>
 <link
     href="http://cdn.pydata.org/bokeh/release/bokeh-0.13.0.min.css"
     rel="stylesheet" type="text/css">
@@ -10,13 +9,13 @@
 
 <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.13.0.min.js"></script>
 <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.13.0.min.js"></script>
-{% endblock %}
 
-{% extends "layout.html" %}
-{% block content %}
-<div style="height:100px"></div>
+</head>
+<body>
+<H1>Iris Histogram</H1>
 
 {{ div|safe }}
 {{ script|safe }}
 
-{% endblock content %}
+</body>
+</html>
