@@ -1,0 +1,25 @@
+<!-- Template para Distribución Tópico-Palabra -->
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h2> Nombre: "{{twdis.name}}" </h2>
+<h5> Distribución Tópico-Palabra #{{twdis.id}}</h5>
+
+<h4> Explorar: </h4>
+<p>
+  <a href="{{url_for('plot_twdis_summary', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn">
+    Gráfico Resumen
+  </a>
+  <a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twdis.id, topic_id = 0) }}" class="waves-effect waves-light btn">
+    Gráfico por Tópico
+  </a>
+  <a href="{{url_for('dis_twdis_download', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn green">
+    Descargar
+  </a>
+</p>
+
+<h4> Descripción:</h4>
+<p> {{twdis.description}} </p>
+
+{% endblock content %}

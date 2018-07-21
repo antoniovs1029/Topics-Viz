@@ -17,14 +17,14 @@
 </div>
 
 <h5> Distribuciones Tópico-Palabras </h5>
-{% for twd in twdis_list %}
+{% for twdis in twdis_list %}
 <div>
   <p>
-    <p> ID {{twd.id}}: {{twd.name}} </p>
-    <a href="{{url_for('plot_twdis_summary', ts_id = ts_id, twdis_id = twd.id) }}" class="waves-effect waves-light btn-small">
+    <p> ID {{twdis.id}}: {{twdis.name}} </p>
+    <a href="{{url_for('plot_twdis_summary', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn-small">
       Gráfico Resumen
     </a>
-    <a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twd.id, topic_id = 0) }}" class="waves-effect waves-light btn-small">
+    <a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twdis.id, topic_id = 0) }}" class="waves-effect waves-light btn-small">
       Gráfico por Tópico
     </a>
   </p>

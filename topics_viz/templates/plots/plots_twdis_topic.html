@@ -4,8 +4,8 @@
 
 {% extends "layout.html" %}
 {% block content %}
-<h1>Tópico: {{topic.id}} (con {{topic.nwords}} palabras)</h1>
-<h3>Distribución "{{twdis.name}}"</h3>
+<h3>Tópico #{{topic.id}} (con {{topic.nwords}} palabras)</h3>
+<h4>Distribución "{{twdis.name}}"</h4>
 
 <p>
 <a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twdis.id, topic_id = topic.id - 1) }}" class="waves-effect waves-light btn-small">
@@ -26,8 +26,16 @@
 </p>
 
 <p>
-  <a href="{{url_for('topic', ts_id = ts_id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small orange">
-    Explorar Tópico
+  <a href="{{url_for('dis_twdis_table', ts_id = ts_id, twdis_id = twdis.id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small red">
+    Ver Tabla
+  </a>
+
+  <a href="{{url_for('dis_twdis', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn-small blue">
+    Ir a la Distribución
+  </a>
+
+  <a href="{{url_for('topic', ts_id = ts_id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small green">
+    Ir al Tópico
   </a>
 </p>
 

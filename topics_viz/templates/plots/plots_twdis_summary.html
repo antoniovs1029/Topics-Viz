@@ -6,6 +6,11 @@
 {% block content %}
 <h1>Resumen:</h1>
 <h3>Distribución "{{twdis.name}}"</h3>
+<p>
+  <a href="{{url_for('dis_twdis', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn-small blue">
+    Info de la Distribución
+  </a>
+</p>
 
 <p>A continuación se grafica el máximo, mínimo y promedio de la distribución "{{twdis.name}}" en cada tópico:</p>
 {{ div|safe }}
