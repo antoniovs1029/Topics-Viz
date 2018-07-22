@@ -14,7 +14,7 @@ class Corpus(db.Model):
     __tablename__ = 'corpus'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), default = "Empty Name")
-    description = db.Column(db.Text, default = "Empty Description")    
+    description = db.Column(db.Text, default = "Empty Description")
 
 class TopicSet(db.Model):
     """
@@ -24,6 +24,7 @@ class TopicSet(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), default = "Empty Name")
     description = db.Column(db.Text, default = "Empty Description")
+    ntopics = db.Column(db.Integer, default= -1) # Se debe mantener manualmente
 
 class Topic(db.Model):
     """

@@ -1,6 +1,8 @@
 from topics_viz import db
 from topics_viz.models import *
 
+from sqlalchemy import func
+
 def info_corpus(name, description):
     c = Corpus(name = name, description = description)
     db.session.add(c)
@@ -45,8 +47,12 @@ def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset
                 db.session.commit() # @TODO: No se cada cuanto hacerlo. Ya que al hacerlo mas frecuentemente si se tarda mas.
 
     print("Actualizando Topicos")
+    cont = 0
     for t in Topic.query.all():
         t.nwords = len(t.words)
+        cont += 1
+
+    tset.ntopics = cont
 
     print("Actualizando contador de topicos en las Palabras") # @TODO: Se tarda demasiado aqui
     _count_topics_for_words(tset.id)
@@ -58,22 +64,20 @@ def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset
     """
 def _count_topics_for_words(topicset_id):
     for i, w in enumerate(Word.query):
-        tnum = db.session.query(TopicWordAssociation)\
+        tnum = db.session.query(func.count(TopicWordAssociation.word_id))\
             .filter(TopicWordAssociation.topicset_id == topicset_id)\
             .filter(TopicWordAssociation.word_id == w.id)\
-            .count()
+            .one()
 
         v = WordTopicsNumber(
             topicset_id = topicset_id,
             word_id = w.id,
-            ntopics = tnum
+            ntopics = tnum[0]
             )
 
         if i % 100 == 0:
             print("Procesando palabras con ID del", i, "al", i + 99)
-
         db.session.add(v)
-
     db.session.commit()
     pass
 

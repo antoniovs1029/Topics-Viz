@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h4 class="center-align"> TopicSet #{{ tset.id }} </h4>
 <h3 class="center-align"> "{{tset.name}}" <h3>
+<h4 class="center-align"> TopicSet #{{ tset.id }} </h4>
 
 <h5> Descripción: </h5>
-<p> {{tset.description}} </p>
+<p> Número de Tópicos: {{tset.ntopics}} </p>
+<p> Descripción: {{tset.description}} </p>
 
 <h5>Gráficos: </h5>
 <p>

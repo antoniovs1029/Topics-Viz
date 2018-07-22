@@ -24,7 +24,7 @@
 
   <div class="collection">
   {% for ts in topic_sets %}
-        <a class="collection-item" href="{{url_for('topic_set', ts_id = ts.id)}}"> <h5> ID#{{ts.id}}: {{ts.name}}</h5>
+        <a class="collection-item" href="{{url_for('topic_set', ts_id = ts.id)}}"> <h5> ID#{{ts.id}}: {{ts.name}} ({{ts.ntopics}} tópicos)</h5>
         <p> {{ts.description}} </p> </a>
   {% endfor %}
 </div>
