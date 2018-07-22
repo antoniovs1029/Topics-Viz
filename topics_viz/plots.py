@@ -1,5 +1,6 @@
 from topics_viz import app, db
 from topics_viz.models import *
+from topics_viz.models_distributions import *
 
 from bokeh.plotting import figure
 from bokeh.embed import components

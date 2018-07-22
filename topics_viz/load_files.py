@@ -1,5 +1,6 @@
 from topics_viz import db
 from topics_viz.models import *
+from topics_viz.models_distributions import *
 
 from sqlalchemy import func
 

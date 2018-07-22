@@ -4,6 +4,7 @@ from topics_viz import app, db
 from flask import render_template, url_for, redirect, request, Response
 
 from topics_viz.models import *
+from topics_viz.models_distributions import *
 from topics_viz.forms import SearchForm
 from topics_viz.templates_python import create_HTML_table
 

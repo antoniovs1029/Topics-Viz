@@ -1,6 +1,7 @@
 from topics_viz import app, db
 from flask import render_template, url_for, redirect, request
 from topics_viz.models import *
+from topics_viz.models_distributions import *
 from bokeh.embed import components
 import topics_viz.plots as plotter
 
