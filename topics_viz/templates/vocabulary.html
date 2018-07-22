@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1> Vocabulario </h1>
-    Vocabulario con {{ results.total }} palabras. Se muestran {{ results.items | length}} palabras en esta página. Dar click <a href = {{ url_for('vocabulary_all', ts_id = ts_id) }} > aqui </a> para ver una página que enlista todas las palabras (puede demorar en cargar).
+    El vocabulario del topicset es de {{ results.total }} palabras (se descartan las palabras que no aparezcan en ningún tópico). Se muestran {{ results.items | length}} palabras en esta página. Dar click <a href = {{ url_for('vocabulary_all', ts_id = ts_id) }} > aqui </a> para ver una página que enlista todas las palabras (puede demorar en cargar).
 
     {% with content_2_link='vocabulary' %}
       {% include 'page_nav.html' %}

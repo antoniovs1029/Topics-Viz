@@ -4,14 +4,7 @@ from topics_viz.models import *
 from bokeh.embed import components
 import topics_viz.plots as plotter
 
-@app.route("/ts<int:ts_id>/plots")
-def plots(ts_id):
-    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
-    twdis_list = db.session.query(TopicWordDistribution).filter(TopicWordDistribution.topicset_id == tset.id)
-
-    return render_template('plots/plots_main.html', ts_id = tset.id, twdis_list = twdis_list)
-
-@app.route("/plot/ts<int:ts_id>/plots_topics_nwords")
+@app.route("/ts<int:ts_id>/plot/plots_topics_nwords")
 def plot_topics_nwords(ts_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
     p = plotter.topicid_nwords_vbar(ts_id)
@@ -20,7 +13,7 @@ def plot_topics_nwords(ts_id):
     return render_template('plots/plots_topics-nwords.html', ts_id = ts_id,
         script = script, div = div[0], div2 = div[1])
 
-@app.route("/plot/ts<int:ts_id>/plots_words_ntopics")
+@app.route("/ts<int:ts_id>/plot/plots_words_ntopics")
 def plot_words_ntopics(ts_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
     p = plotter.wordid_ntopics_vbar(ts_id)
@@ -29,7 +22,7 @@ def plot_words_ntopics(ts_id):
     return render_template('plots/plots_words-ntopics.html', ts_id = ts_id,
         script = script, div = div[0], div2 = div[1])
 
-@app.route("/plot/ts<int:ts_id>/twdis<int:twdis_id>/summary")
+@app.route("/ts<int:ts_id>/distributions/twdis<int:twdis_id>/plot/summary")
 def plot_twdis_summary(ts_id, twdis_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
     twdis = db.session.query(TopicWordDistribution)\
@@ -41,7 +34,7 @@ def plot_twdis_summary(ts_id, twdis_id):
     return render_template('plots/plots_twdis_summary.html', ts_id = ts_id,
         twdis = twdis, script = script, div = div)
 
-@app.route("/plot/ts<int:ts_id>/twdis<int:twdis_id>/topic<int:topic_id>")
+@app.route("/ts<int:ts_id>/distributions/twdis<int:twdis_id>/plot/topic<int:topic_id>")
 def plot_twdis_topic(ts_id, twdis_id, topic_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
 

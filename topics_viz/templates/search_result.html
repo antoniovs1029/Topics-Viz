@@ -4,7 +4,7 @@
 <p>Se han encontrado {{ wlen }} resultados que incluyen la cadena '{{ searched }}'</p>
     <ul class="collection">
     {% for elem in word_list %}
-        <a href="{{ url_for('word', ts_id = ts_id, word_id = elem.id) }}" class="collection-item"> {{ elem.word_string }} </a>
+        <a href="{{ url_for('word', ts_id = ts_id, word_id = elem.id) }}" class="collection-item"> ID#{{elem.id}} : {{ elem.word_string }} </a>
     {% endfor %}
     </ul>
 {% endblock content %}

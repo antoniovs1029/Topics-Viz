@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1> Vocabulario </h1>
-    Vocabulario con {{ wnum }} palabras. Dar click en algún encabezado para ordenar los elementos según ese campo.
+    El vocabulario del corpus es de {{ wnum }} palabras (incluyendo las palabras que no se asocian a ningún tópico). Dar click en algún encabezado para ordenar los elementos según ese campo.
 
     {{ table | safe }}
 

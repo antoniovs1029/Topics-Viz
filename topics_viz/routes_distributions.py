@@ -73,5 +73,4 @@ def dis_twdis_download(ts_id, twdis_id):
             f += "{}:{} ".format(elem.word_id, elem.value)
         f += "\n"
     f+= "</pre>"
-    print(f[0:10])
     return Response(f, 'text/html')

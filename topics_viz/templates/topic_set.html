@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h4 class="center-align"> TopicSet #{{ tset.id }} </h4>
+<h3 class="center-align"> "{{tset.name}}" <h3>
+
+<h5> Descripción: </h5>
+<p> {{tset.description}} </p>
+
+<h5>Gráficos: </h5>
+<p>
+  <a href="{{url_for('plot_topics_nwords', ts_id = tset.id) }}" class="waves-effect waves-light btn">
+    Tópicos - # Palabras
+  </a>
+  <a href="{{url_for('plot_words_ntopics', ts_id = tset.id) }}" class="waves-effect waves-light btn">
+    Palabras - # Tópicos
+  </a>
+</p>
+
+<h5>Opciones: </h5>
+<p>
+  <a href="{{url_for('topic_set_txt', ts_id = tset.id) }}" class="waves-effect waves-light btn green">
+    Descargar Tópicos en Texto
+  </a>
+</p>
+
+{% endblock content %}

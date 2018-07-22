@@ -1,7 +1,7 @@
 import time
 
 from topics_viz import app, db
-from flask import render_template, url_for, redirect, request
+from flask import render_template, url_for, redirect, request, Response
 
 from topics_viz.models import *
 from topics_viz.forms import SearchForm
@@ -15,9 +15,23 @@ def home():
     return render_template('home.html', title="Topics-Viz", corpus = c, topic_sets = TopicSet.query)
 
 @app.route("/ts<int:ts_id>")
-@app.route("/ts<int:ts_id>/topics/home")
-def topics_home(ts_id):
-    return redirect(url_for('topics', ts_id = ts_id))
+def topic_set(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    return render_template('topic_set.html', ts_id = tset.id, tset = tset)
+
+@app.route("/ts<int:ts_id>/txt")
+def topic_set_txt(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    q = Topic.query.filter_by(topicset_id = tset.id).order_by(Topic.id)
+
+    f =""
+    f += "<pre>"
+    for t in q:
+        for elem in t.words:
+            f += "{} ".format(elem.word.word_string)
+        f += "\n"
+    f+= "</pre>"
+    return Response(f, 'text/html')
 
 @app.route("/ts<int:ts_id>/topics")
 def topics(ts_id):
@@ -110,6 +124,7 @@ def vocabulary(ts_id):
     page = request.args.get('page', 1, type=int)
     results = WordTopicsNumber.query\
         .filter_by(topicset_id = tset.id)\
+        .filter(WordTopicsNumber.ntopics > 0)\
         .order_by(WordTopicsNumber.word_id)\
         .paginate(per_page = 100, page = page)
 
