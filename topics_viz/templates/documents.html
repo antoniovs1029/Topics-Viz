@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Documentos</h1>
+    Hay {{ results.total }} documentos. Se muestran {{ results.items.__len__() }} documentos en esta página. Dar click <a href = {{ url_for('documents_all', ts_id = ts_id) }} > aqui </a> para ver una página que enlista todos los documentos (puede demorar en cargar).
+
+    {% with content_2_link='documents' %}
+      {% include 'page_nav.html' %}
+    {% endwith %}
+
+    <ul class="collection">
+    {% for doc in results.items %}
+       <li class="collection-item">  ID#{{ doc.id }}: {{doc.title}} </li>
+    {% endfor %}
+    </ul>
+{% endblock content %}

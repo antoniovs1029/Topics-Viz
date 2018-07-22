@@ -104,3 +104,27 @@ def load_topics_distrib(file_path, topicset_id, name, description = "Emtpy Descr
 
     # @TODO: Comprobar que la distribucion ingresada sea valida, en que las tuplas (word, topic) que usa realmente sean válidas
     # En la implementacion actual si se meten datos erroneos, no avisa... y al generar la pagina del topico, explota
+
+def load_documents(file_path):
+    print("Cargando documentos")
+    with open(file_path) as fp:
+        for doc_id, line in enumerate(fp):
+            new_doc = Document(id = doc_id, title = line.strip('\n'))
+            db.session.add(new_doc)
+    db.session.commit()
+
+def load_topic_document_distribution(file_path, topicset_id, name= "Empty Name", description = "Empty Description"):
+    print("Cargado Distribución Tópico-Documento")
+    tset = db.session.query(TopicSet).filter(TopicSet.id == topicset_id).one() # para que si no existe el topicset, suceda un error
+    tddis_id = db.session.query(TopicDocumentDistribution).filter(TopicDocumentDistribution.topicset_id==tset.id).count()
+    tddis = TopicDocumentDistribution(id = tddis_id, topicset_id = tset.id, name= name, description = description)
+    db.session.add(tddis)
+    with open(file_path) as fp:
+        for topic_id, line in enumerate(fp):
+            for elem in line.split(" ")[1:]:
+                document_id, val = tuple(elem.split(":"))
+                document_id = int(document_id)
+                val = float(val)
+                new_val = TopicDocumentValue(topicset_id = tset.id, topic_id = topic_id, document_id = document_id, tddis_id = tddis.id, value = val)
+                db.session.add(new_val)
+    db.session.commit()

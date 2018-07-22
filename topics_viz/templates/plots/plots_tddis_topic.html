@@ -5,14 +5,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <h3>Tópico #{{topic.id}} (con {{topic.nwords}} palabras)</h3>
-<h4>Distribución "{{twdis.name}}"</h4>
+<h4>Distribución "{{tddis.name}}"</h4>
 
 <p>
-<a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twdis.id, topic_id = topic.id - 1) }}" class="waves-effect waves-light btn-small">
+<a href="{{url_for('plot_tddis_topic', ts_id = ts_id, tddis_id = tddis.id, topic_id = topic.id - 1) }}" class="waves-effect waves-light btn-small">
   Anterior Tópico
 </a>
 
-<a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twdis.id, topic_id = topic.id + 1) }}" class="waves-effect waves-light btn-small">
+<a href="{{url_for('plot_tddis_topic', ts_id = ts_id, tddis_id = tddis.id, topic_id = topic.id + 1) }}" class="waves-effect waves-light btn-small">
   Siguiente Tópico
 </a>
 
@@ -26,11 +26,11 @@
 </p>
 
 <p>
-  <a href="{{url_for('dis_twdis_table', ts_id = ts_id, twdis_id = twdis.id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small red">
+  <a href="{{url_for('dis_tddis_table', ts_id = ts_id, tddis_id = tddis.id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small red">
     Ver Tabla
   </a>
 
-  <a href="{{url_for('dis_twdis', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn-small blue">
+  <a href="{{url_for('dis_tddis', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn-small blue">
     Ir a la Distribución
   </a>
 

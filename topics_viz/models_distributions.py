@@ -10,6 +10,8 @@ class TopicWordDistribution(db.Model):
     - id: el numero identificador de la distribución Topico-Palabra
     - name: nombre de la distribución
     - description: texto que describa la distribución
+    - normalization_value: número con el cual dividir para normalizar los
+    valores de la distribución. Útil para graficar.
 
     Dentro del codigo se usa frecuentemente la abreviación "twdis" o "TWDis"
     para referirse a esta clase.
@@ -19,9 +21,10 @@ class TopicWordDistribution(db.Model):
     topicset_id = db.Column(db.Integer, db.ForeignKey('topic_set.id'), primary_key=True)
     name = db.Column(db.String(20), default = "Empty Name")
     description = db.Column(db.Text, default = "Empty Description")
+    normalization_value = db.Column(db.Integer, default = 1)
 
     def __repr__(self):
-        return 'Topic Distribution #' + str(self.id)
+        return 'Topic-Word Distribution #' + str(self.id)
 
 class TopicWordValue(db.Model):
     """
@@ -53,4 +56,37 @@ class TopicWordValue(db.Model):
     # twa = db.relationship('TopicWordAssociation', back_populates='probabilities')
 
     def __repr__(self):
-        return '(TWDis: ' + str(self.twdis_id) + ', T: ' + str(self.topic_id) + ', W: ' + str(self.word_id) + ', V: ' + str(self.probability) + ')'
+        return '(TWDis: ' + str(self.twdis_id) + ', T: ' + str(self.topic_id) + ', W: ' + str(self.word_id) + ', V: ' + str(self.value) + ')'
+
+class TopicDocumentDistribution(db.Model):
+    __tablename__ = 'topic_document_distribution'
+    id = db.Column(db.Integer, primary_key = True)
+    topicset_id = db.Column(db.Integer, db.ForeignKey('topic_set.id'), primary_key=True)
+    name = db.Column(db.String(20), default = "Empty Name")
+    description = db.Column(db.Text, default = "Empty Description")
+    normalization_value = db.Column(db.Integer, default = 1)
+
+
+    def __repr__(self):
+        return 'Topic-Document Distribution #' + str(self.id)
+
+class TopicDocumentValue(db.Model):
+    __tablename__ = 'topic_document_value'
+    topicset_id = db.Column(db.Integer, primary_key = True)
+    topic_id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, primary_key=True)
+    tddis_id = db.Column(db.Integer, primary_key = True)
+    value = db.Column(db.Float, nullable=False)
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['topicset_id', 'topic_id'],
+            ['topic.topicset_id','topic.id']
+            ),
+        db.ForeignKeyConstraint(
+            ['topicset_id', 'tddis_id'],
+            ['topic_document_distribution.topicset_id', 'topic_document_distribution.id']
+            ), {}
+        )
+
+    def __repr__(self):
+        return '(TDDis: ' + str(self.tddis_id) + ', T: ' + str(self.topic_id) + ', D: ' + str(self.document_id) + ', V: ' + str(self.value) + ')'

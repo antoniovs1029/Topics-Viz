@@ -30,10 +30,10 @@ def plot_twdis_summary(ts_id, twdis_id):
         .filter(TopicWordDistribution.topicset_id == tset.id)\
         .filter(TopicWordDistribution.id == twdis_id).one() # para que si no existe la twdis suceda un error
 
-    p = plotter.twdis_summary(ts_id, twdis_id)
-    script, div = components(p)
+    p1, p2 = plotter.twdis_summary(ts_id, twdis_id)
+    script, div = components((p1, p2))
     return render_template('plots/plots_twdis_summary.html', ts_id = ts_id,
-        twdis = twdis, script = script, div = div)
+        twdis = twdis, script = script, div = div[0], div2 = div[1])
 
 @app.route("/ts<int:ts_id>/distributions/twdis<int:twdis_id>/plot/topic<int:topic_id>")
 def plot_twdis_topic(ts_id, twdis_id, topic_id):
@@ -52,6 +52,36 @@ def plot_twdis_topic(ts_id, twdis_id, topic_id):
     script, div = components((panorama, full))
     return render_template('plots/plots_twdis_topic.html', ts_id = ts_id,
         twdis = twdis, topic = topic, script = script, div = div[0], div2 = div[1])
+
+@app.route("/ts<int:ts_id>/distributions/tddis<int:tddis_id>/plot/summary")
+def plot_tddis_summary(ts_id, tddis_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    tddis = db.session.query(TopicDocumentDistribution)\
+        .filter(TopicDocumentDistribution.topicset_id == tset.id)\
+        .filter(TopicDocumentDistribution.id == tddis_id).one() # para que si no existe la twdis suceda un error
+
+    p1, p2, p3 = plotter.tddis_summary(ts_id, tddis_id)
+    script, div = components((p1, p2, p3))
+    return render_template('plots/plots_tddis_summary.html', ts_id = ts_id,
+        tddis = tddis, script = script, div1 = div[0], div2 = div[1], div3 = div[2])
+
+@app.route("/ts<int:ts_id>/distributions/tddis<int:tddis_id>/plot/topic<int:topic_id>")
+def plot_tddis_topic(ts_id, tddis_id, topic_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+
+    topic = db.session.query(Topic)\
+        .filter(Topic.topicset_id == ts_id)\
+        .filter(Topic.id == topic_id).one()
+
+    tddis = db.session.query(TopicDocumentDistribution)\
+        .filter(TopicDocumentDistribution.topicset_id == tset.id)\
+        .filter(TopicDocumentDistribution.id == tddis_id).one() # para que si no existe la tddis suceda un error
+
+
+    panorama, full = plotter.tddis_topic(ts_id, tddis_id, topic_id)
+    script, div = components((panorama, full))
+    return render_template('plots/plots_tddis_topic.html', ts_id = ts_id,
+        tddis = tddis, topic = topic, script = script, div = div[0], div2 = div[1])
 
 @app.route("/p")
 def p():

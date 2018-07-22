@@ -34,13 +34,34 @@
   {% endfor %}
   </ul>
 
-<!--
-{%  for distrib in distribs %}
-<div class = "orange">
-    <h5> ID #{{distrib.id}} : "{{distrib.name}}" </h5>
-    <p> {{distrib.description}} </p>
-</div>
-{% endfor %}
--->
+  <div>
+    <h3> Distribuciones Tópico-Documento </h3>
+  </div>
+    <ul class="collection">
+    {%  for tddis in tddis_list %}
+      <li class="collection-item">
+        <h5> ID #{{tddis.id}} : "{{tddis.name}}" </h5>
+        <p> {{tddis.description}} </p>
+        <p>
+          <a href="{{url_for('dis_tddis', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn blue">
+            Info
+          </a>
 
+          <a href="{{url_for('dis_tddis_table', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn orange">
+            Tabla por Tópico
+          </a>
+
+          <a href="{{url_for('plot_tddis_summary', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn">
+            Gráfico Resumen
+          </a>
+          <a href="{{url_for('plot_tddis_topic', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn">
+            Gráfico por Tópico
+          </a>
+          <a href="{{url_for('dis_tddis_download', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn green">
+            Descargar TXT
+          </a>
+        </p>
+      </li>
+    {% endfor %}
+    </ul>
 {% endblock content %}

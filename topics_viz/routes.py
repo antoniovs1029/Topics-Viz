@@ -162,6 +162,27 @@ def vocabulary_all():
     return render_template('vocabulary_all.html', title= "Vocabulario", wnum = wnum, word_list = word_list)
 """
 
+@app.route("/ts<int:ts_id>/documents")
+def documents(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    page = request.args.get('page', 1, type=int)
+    results = Document.query.order_by(Document.id).paginate(per_page = 50, page = page)
+    return render_template('documents.html', title="Documentos", ts_id = tset.id, results = results)
+
+@app.route("/<int:ts_id>/documents_all")
+def documents_all(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+
+    table_elements = dict()
+    table_headings = ['ID', 'Título']
+    for doc in Document.query:
+        table_elements[doc.id] = list()
+        table_elements[doc.id].append(str(doc.id))
+        table_elements[doc.id].append(doc.title)
+
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    return render_template('documents_all.html', title="Documentos", ts_id = tset.id, dnum = len(table_elements), table = table)
+
 @app.route("/ts<int:ts_id>/search", methods=['GET', 'POST'])
 def search(ts_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error

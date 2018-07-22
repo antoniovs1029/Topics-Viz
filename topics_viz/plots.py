@@ -145,6 +145,7 @@ def twdis_summary(ts_id, twdis_id):
     maxes = []
     mins = []
     avgs = []
+    nwords = []
     for topic in Topic.query.filter_by(topicset_id = ts_id):
         ids.append(str(topic.id))
         tmax, tmin, tavg = db.session.query(
@@ -159,8 +160,9 @@ def twdis_summary(ts_id, twdis_id):
         maxes.append(tmax)
         mins.append(tmin)
         avgs.append(tavg)
+        nwords.append(topic.nwords)
 
-    p = figure(plot_height = 600, plot_width = 600,
+    p = figure(plot_height = 300, plot_width = 600,
         x_axis_label = 'ID de Tópico',
         y_axis_label = 'Valor',
         tools="xpan, xwheel_zoom, box_zoom, reset, save",
@@ -175,8 +177,17 @@ def twdis_summary(ts_id, twdis_id):
     #    ys = [maxes, mins, avgs],
     #    line_color = ['#FF0000', '#0087FF', '#1D702D']
     #    )
-    print(len(ids))
-    return p
+
+    p2 = figure(plot_height = 300, plot_width = 600,
+        x_axis_label = 'ID de Tópico',
+        y_axis_label = '# Palabras',
+        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        x_range=p.x_range
+        )
+
+    p2.line(ids, nwords, line_color="black")
+
+    return p, p2
 
 def twdis_topic(ts_id, twdis_id, topic_id):
     """
@@ -224,3 +235,117 @@ def twdis_topic(ts_id, twdis_id, topic_id):
         )
 
     return panorama, full
+
+def tddis_summary(ts_id, tddis_id):
+    """
+    """
+    ids = []
+    maxes = []
+    mins = []
+    avgs = []
+    counts = []
+    nwords = []
+    for topic in Topic.query.filter_by(topicset_id = ts_id):
+        ids.append(str(topic.id))
+        tmax, tmin, tavg, tcount = db.session.query(
+            func.max(TopicDocumentValue.value),
+            func.min(TopicDocumentValue.value),
+            func.avg(TopicDocumentValue.value),
+            func.count(TopicDocumentValue.value)
+            )\
+            .filter(TopicDocumentValue.topicset_id == ts_id)\
+            .filter(TopicDocumentValue.tddis_id == tddis_id)\
+            .filter(TopicDocumentValue.topic_id == topic.id)\
+            .one()
+        maxes.append(tmax)
+        mins.append(tmin)
+        avgs.append(tavg)
+        counts.append(tcount)
+        nwords.append(topic.nwords)
+
+    p1 = figure(plot_height = 300, plot_width = 600,
+        x_axis_label = 'ID de Tópico',
+        y_axis_label = '# Documentos Relacionados',
+        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        x_range=[0,len(ids)]
+        )
+    p1.line(ids, counts, line_color="black")
+
+    p2 = figure(plot_height = 300, plot_width = 600,
+        x_range = p1.x_range,
+        x_axis_label = 'ID de Tópico',
+        y_axis_label = 'Valor',
+        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        # x_range=[0,len(ids)]
+        )
+
+    p2.line(ids, maxes, legend="Máximo", line_color="red")
+    p2.line(ids, mins, legend="Mínimo", line_color="blue")
+    p2.line(ids, avgs, legend="Promedio", line_color="green")
+
+    p3 = figure(plot_height = 300, plot_width = 600,
+        x_range = p1.x_range,
+        x_axis_label = 'ID de Tópico',
+        y_axis_label = '# Palabras',
+        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        # x_range=[0,len(ids)]
+        )
+
+    p3.line(ids, nwords, line_color="black")
+
+    #p.multi_line(
+    #    xs = [ids, ids, ids],
+    #    ys = [maxes, mins, avgs],
+    #    line_color = ['#FF0000', '#0087FF', '#1D702D']
+    #    )
+    return (p1, p2, p3)
+
+def tddis_topic(ts_id, tddis_id, topic_id):
+    """
+    """
+    ids = []
+    doc_ids = []
+    titles = []
+    values = []
+
+    q = db.session.query(TopicDocumentValue)\
+        .filter(TopicDocumentValue.topicset_id == ts_id)\
+        .filter(TopicDocumentValue.tddis_id == tddis_id)\
+        .filter(TopicDocumentValue.topic_id == topic_id)\
+        .order_by(TopicDocumentValue.document_id)
+
+    for i, elem in enumerate(q):
+        ids.append(i)
+        doc_ids.append(str(elem.document_id))
+        titles.append(Document.query.filter_by(id = elem.document_id).one().title)
+        values.append(elem.value)
+
+    panorama1 = figure(plot_height = 200, plot_width = 600,
+        x_axis_label = 'Documentos (ordenados por ID)',
+        y_axis_label = 'Valor',
+        x_range=[-2,len(ids)],
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above"
+        )
+
+    panorama1.line(ids, values)
+
+    data = {'doc_id': doc_ids, 'title': titles, 'value': values}
+
+    full = figure(
+        y_range= doc_ids,
+        plot_width=600,
+        x_axis_label = "Valor",
+        y_axis_label ="Documentos (ordenadas por ID)",
+        tools="ypan, ywheel_zoom, ywheel_pan, box_zoom, reset, save",
+        tooltips=[("Titulo", "@title"), ("Valor", "@value"), ("ID", "@doc_id")]
+        )
+
+    full.hbar(
+        source = data,
+        y = 'doc_id',
+        right = 'value',
+        height=0.5
+        )
+
+    return panorama1, full
