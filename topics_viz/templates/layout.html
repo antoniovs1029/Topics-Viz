@@ -22,6 +22,7 @@
         <li><a href="{{url_for('distributions', ts_id = ts_id)}}">Distribuciones</a></li>
     <li><a href="{{url_for('vocabulary', ts_id = ts_id)}}">Vocabulario</a></li>
     <li><a href="{{url_for('documents', ts_id = ts_id)}}">Documentos</a></li>
+    <li><a href="{{url_for('exploration', ts_id = ts_id)}}">Explorar Datos</a></li>
     <li><a href="{{url_for('search', ts_id = ts_id)}}">Búsqueda de Palabras</a></li>
 </div>
 </nav>
@@ -29,6 +30,8 @@
 <div class="container">
 {% block content %}{% endblock %}
 </div>
+
+{% block outside_content %}{% endblock %}
 
 <div style="height:100px"></div>
 

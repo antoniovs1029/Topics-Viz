@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block outside_content %}
+
+<div class="row">
+    <form>
+        <div class="input-field col s3">
+            <h5>Seleccionar</h5>
+            {% for i in range(col_num) %}
+                Columna #{{ i + 1}}:
+                <select id="col{{i + 1}}" name="col{{i + 1}}" class="browser-default">
+                    <option value="None" selected>No usar</option>
+                    <optgroup label="Dis. Palabras">
+                        <option value="tnum">Número de Tópicos</option>
+                    </optgroup>
+                    <optgroup label="Dis. Tópico-Palabra">
+                    {% for twdis in twdis_list %}
+                        <option value="twdis{{twdis.id}}">#{{twdis.id}} - {{twdis.name}}</option>
+                    {% endfor %}
+                    </optgroup>
+                </select>
+            {% endfor %}
+            Ir a tópico número:
+            <input type="number" name="topic_id" value="{{topic.id}}"/>
+            <input type="submit" value="Submit" class="btn">
+        </div>
+    </form>
+
+    <div class="col s9">
+        <h3>Tópico #{{topic.id}} ({{topic.nwords}} Palabras)</h3>
+        <a href="{{previous_topic_url()}}" class="btn-small"> Anterior Tópico </a>
+        <a href="{{next_topic_url()}}" class="btn-small"> Siguiente Tópico </a>
+        {{ table | safe}}
+    </div>
+</div>
+
+
+{% include 'interactive_table_import.html' %}
+
+<script>
+    $(document).ready(function() {
+        var url = new URL(document.location);
+        var params = url.searchParams;
+ 
+        var i;
+        for(i = 1; i <= {{col_num}}; i++){
+           var v = params.get("col" + i);
+           $("#col" + i).val(v);
+        }
+});
+</script>
+
+{% endblock outside_content %}

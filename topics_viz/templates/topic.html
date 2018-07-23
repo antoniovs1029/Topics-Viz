@@ -10,8 +10,8 @@
 <a href="{{url_for('topic', ts_id = ts_id, topic_id = topic_id + 1) }}" class="waves-effect waves-light btn-small">
     Siguiente Tópico
 </a>
-<a href="{{url_for('topic_distributions', ts_id = ts_id, topic_id =  topic_id) }}" class="waves-effect waves-light btn-small orange darken-4">
-    Ver Distribuciones del Tópico {{topic_id}}
+<a href="{{url_for('explore_topic_table', ts_id = ts_id, topic_id =  topic_id) }}" class="waves-effect waves-light btn-small orange darken-4">
+    Explorar Distribuciones
 </a>
 </p>
 <p> Dar click en el nombre de la columna, para ordenar los datos según ese campo</p>

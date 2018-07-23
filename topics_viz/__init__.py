@@ -11,3 +11,4 @@ db = SQLAlchemy(app)
 from topics_viz import routes
 from topics_viz import routes_plots
 from topics_viz import routes_distributions
+from topics_viz import routes_exploration
