@@ -1,17 +1,30 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1> Palabra: {{ word.word_string }} </h1>
-    <p> Esta palabra esta presente en {{ topics_associations | length }} tópicos: </p>
-    <p> *Entre parentesis se muestra el número de palabras en el tópico*</p>
+<h1>Palabra ID#{{word.id}}: {{ word.word_string }} </h1> 
+
+<p>
+<a href="{{url_for('word', ts_id = ts_id, word_id = word.id - 1) }}" class="waves-effect waves-light btn-small">
+    Anterior Palabra
+</a>
+<a href="{{url_for('word', ts_id = ts_id, word_id = word.id + 1) }}" class="waves-effect waves-light btn-small">
+    Siguiente Palabra
+</a>
+<a href="{{url_for('word_distributions', ts_id = ts_id, word_id =  word.id) }}" class="waves-effect waves-light btn-small orange darken-4">
+    Ver Distribuciones de esta palabra
+</a>
+</p>
+
+
+<p> Esta palabra está presente en {{ topics_associations | length }} tópicos: </p>
 
  <table style="width:50%;">
     <tr>
-        <th> Topico </th>
+        <th> Tópico </th>
     </tr>
 
     {% for elem in topics_associations %}
     <tr>
-        <td> <a href="{{url_for('topic', ts_id = ts_id, topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> ({{ elem.topic.nwords }})</td>
+        <td> <a href="{{url_for('topic', ts_id = ts_id, topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> (con {{ elem.topic.nwords }} palabras)</td>
     </tr>
     {% endfor %}
 </table>

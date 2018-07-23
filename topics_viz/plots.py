@@ -29,7 +29,8 @@ def topicid_nwords_vbar(ts_id):
         plot_height=250,
         x_axis_label = "ID de Tópico",
         y_axis_label ="# Palabras",
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         tooltips=[("ID", "@topic_id"), ("# Palabras", "@nwords")]
         )
 
@@ -63,7 +64,8 @@ def topics_nwords_histogram(ts_id):
     p = figure(plot_height = 600, plot_width = 600,
         x_axis_label = '# Palabras',
         y_axis_label = '# Topicos',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         tooltips=[("# De Topicos:", "@hist"), ("# Palabras", "@left")]
         )
 
@@ -91,7 +93,8 @@ def wordid_ntopics_vbar(ts_id):
         plot_height=250,
         x_axis_label = "ID de la Palabra",
         y_axis_label ="# Topicos",
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         tooltips=[("ID", "@word_id"), ("# Topicos", "@ntopics")]
         )
 
@@ -127,7 +130,8 @@ def words_ntopics_histogram(ts_id):
     p = figure(plot_height = 600, plot_width = 600,
         x_axis_label = '# Tópicos',
         y_axis_label = '# Palabras',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         tooltips=[("# De Palabras:", "@hist"), ("# Topicos", "@left")]
         )
 
@@ -165,7 +169,8 @@ def twdis_summary(ts_id, twdis_id):
     p = figure(plot_height = 300, plot_width = 600,
         x_axis_label = 'ID de Tópico',
         y_axis_label = 'Valor',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         x_range=[0,len(ids)]
         )
 
@@ -181,7 +186,8 @@ def twdis_summary(ts_id, twdis_id):
     p2 = figure(plot_height = 300, plot_width = 600,
         x_axis_label = 'ID de Tópico',
         y_axis_label = '# Palabras',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         x_range=p.x_range
         )
 
@@ -210,7 +216,8 @@ def twdis_topic(ts_id, twdis_id, topic_id):
     panorama = figure(plot_height = 200, plot_width = 600,
         x_axis_label = 'Palabras (ordenadas por ID)',
         y_axis_label = 'Valor',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         x_range=[-2,len(ids)]
         )
 
@@ -223,7 +230,7 @@ def twdis_topic(ts_id, twdis_id, topic_id):
         plot_width=600,
         x_axis_label = "Valor",
         y_axis_label ="Palabras (ordenadas por ID)",
-        tools="ypan, ywheel_zoom, box_zoom, reset, save",
+        tools="ypan, ywheel_zoom, ywheel_pan, box_zoom, reset, save",
         tooltips=[("Palabra", "@word"), ("Valor", "@value"), ("ID", "@id")]
         )
 
@@ -266,7 +273,8 @@ def tddis_summary(ts_id, tddis_id):
     p1 = figure(plot_height = 300, plot_width = 600,
         x_axis_label = 'ID de Tópico',
         y_axis_label = '# Documentos Relacionados',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         x_range=[0,len(ids)]
         )
     p1.line(ids, counts, line_color="black")
@@ -275,8 +283,8 @@ def tddis_summary(ts_id, tddis_id):
         x_range = p1.x_range,
         x_axis_label = 'ID de Tópico',
         y_axis_label = 'Valor',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
-        # x_range=[0,len(ids)]
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         )
 
     p2.line(ids, maxes, legend="Máximo", line_color="red")
@@ -287,8 +295,8 @@ def tddis_summary(ts_id, tddis_id):
         x_range = p1.x_range,
         x_axis_label = 'ID de Tópico',
         y_axis_label = '# Palabras',
-        tools="xpan, xwheel_zoom, box_zoom, reset, save",
-        # x_range=[0,len(ids)]
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
         )
 
     p3.line(ids, nwords, line_color="black")
@@ -325,7 +333,7 @@ def tddis_topic(ts_id, tddis_id, topic_id):
         y_axis_label = 'Valor',
         x_range=[-2,len(ids)],
         tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
-        toolbar_location = "above"
+        toolbar_location = "above",
         )
 
     panorama1.line(ids, values)

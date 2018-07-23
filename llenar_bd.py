@@ -22,7 +22,6 @@ load_topics_distrib("./datos_prueba/ts1_distrib3.txt", 1, "SMH Index")
 load_documents("./datos_prueba/nips.docs.txt")
 load_topic_document_distribution("./datos_prueba/tdfile1.txt", 1)
 
-"""
 load_topics_set_and_distrib("./datos_prueba/ts2_distrib1.txt", "Topic Set 2", "SMH Index", "r = 4")
 load_topics_set_and_distrib("./datos_prueba/ts3_distrib1.txt", "Topic Set 3", "SMH Index", "r = 5")
-"""
+

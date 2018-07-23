@@ -19,10 +19,10 @@
     <li class="blue"><a href="{{url_for('home')}}">Inicio</a></li>
     <li class="red"><a href="{{url_for('topic_set', ts_id = ts_id)}}">Topic Set #{{ts_id}}</a></li>
     <li><a href="{{url_for('topics', ts_id = ts_id)}}">Tópicos</a></li>
+        <li><a href="{{url_for('distributions', ts_id = ts_id)}}">Distribuciones</a></li>
     <li><a href="{{url_for('vocabulary', ts_id = ts_id)}}">Vocabulario</a></li>
     <li><a href="{{url_for('documents', ts_id = ts_id)}}">Documentos</a></li>
-    <li><a href="{{url_for('distributions', ts_id = ts_id)}}">Distribuciones</a></li>
-    <li><a href="{{url_for('search', ts_id = ts_id)}}">Búsqueda</a></li>
+    <li><a href="{{url_for('search', ts_id = ts_id)}}">Búsqueda de Palabras</a></li>
 </div>
 </nav>
 

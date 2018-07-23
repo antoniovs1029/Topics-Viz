@@ -49,7 +49,7 @@ def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset
 
     print("Actualizando Topicos")
     cont = 0
-    for t in Topic.query.all():
+    for t in Topic.query.filter_by(topicset_id = tset.id):
         t.nwords = len(t.words)
         cont += 1
 

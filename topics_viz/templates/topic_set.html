@@ -6,7 +6,23 @@
 
 <h5> Descripción: </h5>
 <p> Número de Tópicos: {{tset.ntopics}} </p>
-<p> Descripción: {{tset.description}} </p>
+<p> {{tset.description}} </p>
+
+<h5>Explorar:</h5>
+<p>
+  <a href="{{url_for('topics', ts_id = tset.id) }}" class="waves-effect waves-light btn orange">
+    Ver Tópicos
+  </a>
+  <a href="{{url_for('distributions', ts_id = tset.id) }}" class="waves-effect waves-light btn orange">
+    Ver Distribuciones
+  </a>
+  <a href="{{url_for('vocabulary', ts_id = tset.id) }}" class="waves-effect waves-light btn orange">
+    Ver Vocabulario
+  </a>
+    <a href="{{url_for('documents', ts_id = tset.id) }}" class="waves-effect waves-light btn orange">
+    Ver Documentos
+  </a>
+</p>
 
 <h5>Gráficos: </h5>
 <p>

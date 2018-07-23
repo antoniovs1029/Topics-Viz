@@ -43,6 +43,7 @@ class TopicWordValue(db.Model):
     word_id = db.Column(db.Integer, primary_key=True)
     twdis_id = db.Column(db.Integer, primary_key = True)
     value = db.Column(db.Float, nullable=False)
+    twdis = db.relationship('TopicWordDistribution')
     __table_args__ = (
         db.ForeignKeyConstraint(
             ['topicset_id', 'topic_id', 'word_id'],

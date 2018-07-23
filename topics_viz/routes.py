@@ -61,7 +61,7 @@ def topics_all(ts_id):
 
         table_elements[topic.id].append(word_list)
 
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
 
     return render_template('topics_all.html', title="Topicos", ts_id = tset.id, tnum = len(table_elements), table = table)
 
@@ -103,10 +103,20 @@ def topic(ts_id, topic_id):
             table_elements[v.word_id].append("{:.4f}".format(v.value))
     """
 
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
 
     return render_template('topic.html', title = "Topico #" + str(topic_id),
         ts_id = tset.id, topic_id= topic_id, nwords = t.nwords, table = table)
+
+@app.route("/ts<int:ts_id>/topic/<int:topic_id>/distributions")
+def topic_distributions(ts_id, topic_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    t = Topic.query.filter_by(topicset_id = tset.id).filter_by(id=topic_id).one()
+    twdis_list = TopicWordDistribution.query.filter_by(topicset_id = tset.id)
+    tddis_list = TopicDocumentDistribution.query.filter_by(topicset_id = tset.id)
+
+    return render_template('topic_distributions.html', title = "Topico #" + str(topic_id),
+        ts_id = tset.id, topic_id= topic_id, nwords = t.nwords, twdis_list = twdis_list, tddis_list = tddis_list)
 
 @app.route("/ts<int:ts_id>/word/<int:word_id>")
 def word(ts_id, word_id):
@@ -118,6 +128,25 @@ def word(ts_id, word_id):
         .all()
 
     return render_template('word.html', title = w.word_string, ts_id = tset.id, word = w, topics_associations = topics_associations)
+
+@app.route("/ts<int:ts_id>/word/<int:word_id>/distributions")
+def word_distributions(ts_id, word_id):
+    w = Word.query.filter_by(id=word_id).one() # Para asegurar primero que la palabra exista
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    q = TopicWordDistribution.query.filter_by(topicset_id = tset.id).order_by(TopicWordDistribution.id)
+
+    twdis_list = []
+    twdisvalues_list = []
+    for twdis in q:
+        twdis_list.append(twdis)
+        twdisvalues = TopicWordValue.query.filter_by(topicset_id = tset.id)\
+            .filter_by(twdis_id = twdis.id)\
+            .filter_by(word_id = w.id)\
+            .order_by(TopicWordValue.twdis_id).all()
+        twdisvalues_list.append(twdisvalues)
+
+    return render_template('word_distributions.html', title = w.word_string, ts_id = tset.id, word = w,
+        twdis_list = twdis_list, twdisvalues_list = twdisvalues_list)
 
 @app.route("/ts<int:ts_id>/vocabulary")
 def vocabulary(ts_id):
@@ -150,7 +179,7 @@ def vocabulary_all(ts_id):
     for elem in q:
         table_elements[elem.word_id].append(int(elem.ntopics))
 
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
 
     return render_template('vocabulary_all.html', title= "Vocabulario", ts_id = tset.id, wnum = len(table_elements), table = table)
 
@@ -180,7 +209,7 @@ def documents_all(ts_id):
         table_elements[doc.id].append(str(doc.id))
         table_elements[doc.id].append(doc.title)
 
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
     return render_template('documents_all.html', title="Documentos", ts_id = tset.id, dnum = len(table_elements), table = table)
 
 @app.route("/ts<int:ts_id>/search", methods=['GET', 'POST'])

@@ -53,7 +53,7 @@ def dis_twdis_table(ts_id, twdis_id, topic_id):
     for v in q:
         table_elements[v.word_id].append("{:.4f}".format(v.value))
 
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
 
     return render_template('distributions/dis_tw_table.html', ts_id = tset.id, twdis = twdis, topic = t, table = table)
 
@@ -109,7 +109,7 @@ def dis_tddis_table(ts_id, tddis_id, topic_id):
         table_elements[elem.document_id].append(doc.title)
         table_elements[elem.document_id].append("{:.4f}".format(elem.value))
 
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable", classes= "responsive-table")
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
 
     return render_template('distributions/dis_td_table.html', ts_id = tset.id,
         tddis = tddis, topic = t, table = table, dnum = len(table_elements))
