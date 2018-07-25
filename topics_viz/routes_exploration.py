@@ -72,8 +72,9 @@ def explore_topic_table(ts_id):
 @app.template_global()
 def next_topic_url():
     """
-    Para obtener el url del siguiente topico en la "exploracion actual"
-    sin perder los parametros GET.
+    Global template function de jinja, para obtener el url del siguiente topico
+    en la "exploracion actual" sin perder los parametros GET, ni la exploración
+    actual.
     """
     args = request.args.copy()
 

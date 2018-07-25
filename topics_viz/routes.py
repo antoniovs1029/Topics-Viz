@@ -77,46 +77,15 @@ def topic(ts_id, topic_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
     t = Topic.query.filter_by(topicset_id = tset.id).filter_by(id=topic_id).one()
 
-    table_elements = dict()
-    table_headings = ['ID', 'Palabra', 'No. Tópicos']
+
+    word_list = []
     for word_assoc in t.words:
-        table_elements[word_assoc.word.id] = list()
-        id_link = "<a href=\"" + url_for('word', ts_id = ts_id, word_id = word_assoc.word.id) + "\">" \
-                    + str(word_assoc.word.id)+ "</a>"
-        table_elements[word_assoc.word.id].append(id_link)
-        table_elements[word_assoc.word.id].append(word_assoc.word.word_string)
-
-        ntopics = db.session.query(WordTopicsNumber)\
-                    .filter(WordTopicsNumber.topicset_id == tset.id)\
-                    .filter(WordTopicsNumber.word_id == word_assoc.word.id)\
-                    .one().ntopics
-
-        table_elements[word_assoc.word.id].append(int(ntopics))
-
-    """
-    # Si se quiere añadir todas las distribuciones a la tabla:
-    for twdis in TopicWordDistribution.query.filter_by(topicset_id = tset.id):
-        table_headings.append(twdis.name)
-        for v in TopicWordValue.query\
-            .filter_by(topicset_id = tset.id)\
-            .filter_by(twdis_id = twdis.id, topic_id = topic_id):
-            table_elements[v.word_id].append("{:.4f}".format(v.value))
-    """
-
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
+        word_link = "<a href=\"" + url_for('word', ts_id = ts_id, word_id = word_assoc.word.id) + "\">" \
+                    + str(word_assoc.word.word_string)+ "</a>"
+        word_list.append(word_link)
 
     return render_template('topic.html', title = "Topico #" + str(topic_id),
-        ts_id = tset.id, topic_id= topic_id, nwords = t.nwords, table = table)
-
-@app.route("/ts<int:ts_id>/topic/<int:topic_id>/distributions")
-def topic_distributions(ts_id, topic_id):
-    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
-    t = Topic.query.filter_by(topicset_id = tset.id).filter_by(id=topic_id).one()
-    twdis_list = TopicWordDistribution.query.filter_by(topicset_id = tset.id)
-    tddis_list = TopicDocumentDistribution.query.filter_by(topicset_id = tset.id)
-
-    return render_template('topic_distributions.html', title = "Topico #" + str(topic_id),
-        ts_id = tset.id, topic_id= topic_id, nwords = t.nwords, twdis_list = twdis_list, tddis_list = tddis_list)
+        ts_id = tset.id, topic_id= topic_id, nwords = t.nwords, word_list = word_list)
 
 @app.route("/ts<int:ts_id>/word/<int:word_id>")
 def word(ts_id, word_id):

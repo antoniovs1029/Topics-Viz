@@ -29,6 +29,8 @@
         <h3>Tópico #{{topic.id}} ({{topic.nwords}} Palabras)</h3>
         <a href="{{previous_topic_url()}}" class="btn-small"> Anterior Tópico </a>
         <a href="{{next_topic_url()}}" class="btn-small"> Siguiente Tópico </a>
+        <p> Dar click en el nombre de la columna, para ordenar los datos según ese campo</p>
+
         {{ table | safe}}
     </div>
 </div>
