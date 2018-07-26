@@ -22,41 +22,6 @@ def dis_twdis(ts_id, twdis_id):
 
     return render_template('distributions/dis_tw.html', ts_id = tset.id, twdis = twdis)
 
-@app.route("/ts<int:ts_id>/distributions/twdis<int:twdis_id>/table/topic<int:topic_id>")
-def dis_twdis_table(ts_id, twdis_id, topic_id):
-    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
-    twdis = db.session.query(TopicWordDistribution)\
-        .filter(TopicWordDistribution.topicset_id == tset.id)\
-        .filter(TopicWordDistribution.id == twdis_id).one()
-    t = Topic.query.filter_by(topicset_id = ts_id).filter_by(id = topic_id).one()
-
-    table_elements = dict()
-    table_headings = ['ID', 'Palabra', 'No. Tópicos']
-    for word_assoc in t.words:
-        table_elements[word_assoc.word.id] = list()
-        id_link = "<a href=\"" + url_for('word', ts_id = ts_id, word_id = word_assoc.word.id) + "\">" \
-                    + str(word_assoc.word.id)+ "</a>"
-        table_elements[word_assoc.word.id].append(id_link)
-        table_elements[word_assoc.word.id].append(word_assoc.word.word_string)
-
-        ntopics = db.session.query(WordTopicsNumber)\
-                    .filter(WordTopicsNumber.topicset_id == tset.id)\
-                    .filter(WordTopicsNumber.word_id == word_assoc.word.id)\
-                    .one().ntopics
-
-        table_elements[word_assoc.word.id].append(int(ntopics))
-
-    table_headings.append(twdis.name)
-    q = TopicWordValue.query.filter_by(topicset_id = tset.id)\
-        .filter_by(twdis_id = twdis.id, topic_id = topic_id)
-
-    for v in q:
-        table_elements[v.word_id].append("{:.4f}".format(v.value))
-
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
-
-    return render_template('distributions/dis_tw_table.html', ts_id = tset.id, twdis = twdis, topic = t, table = table)
-
 @app.route("/ts<int:ts_id>/distributions/twdis<int:twdis_id>/download")
 def dis_twdis_download(ts_id, twdis_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
@@ -104,7 +69,6 @@ def dis_tddis_table(ts_id, tddis_id, topic_id):
     for elem in q:
         table_elements[elem.document_id] = list()
         table_elements[elem.document_id].append(str(elem.document_id))
-        print(elem.document_id)
         doc = db.session.query(Document).filter(Document.id == elem.document_id).one()
         table_elements[elem.document_id].append(doc.title)
         table_elements[elem.document_id].append("{:.4f}".format(elem.value))

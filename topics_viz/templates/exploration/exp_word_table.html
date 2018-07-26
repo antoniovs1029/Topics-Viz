@@ -9,26 +9,26 @@
                 Columna #{{ i + 1}}:
                 <select id="col{{i + 1}}" name="col{{i + 1}}" class="browser-default">
                     <option value="None" selected>No usar</option>
-                    <optgroup label="Dis. Palabras">
-                        <option value="tnum">Número de Tópicos</option>
+                    <optgroup label="Dis. Tópicos">
+                        <option value="wnum">Número de Palabras</option>
                     </optgroup>
                     <optgroup label="Dis. Tópico-Palabra">
                     {% for twdis in twdis_list %}
-                        <option value="twdis{{twdis.id}}">TWDIS#{{twdis.id}} - {{twdis.name}}</option>
+                        <option value="twdis{{twdis.id}}">#{{twdis.id}} - {{twdis.name}}</option>
                     {% endfor %}
                     </optgroup>
                 </select>
             {% endfor %}
-            Ir a tópico número:
-            <input type="number" name="topic_id" value="{{topic.id}}"/>
+            Ir a palabra número:
+            <input type="number" name="word_id" value="{{word.id}}"/>
             <input type="submit" value="Submit" class="btn">
         </div>
     </form>
 
     <div class="col s9">
-        <h3>Tópico #{{topic.id}} ({{topic.nwords}} Palabras)</h3>
-        <a href="{{previous_item_url('topic_id')}}" class="btn-small"> Anterior Tópico </a>
-        <a href="{{next_item_url('topic_id')}}" class="btn-small"> Siguiente Tópico </a>
+        <h3>Palabra #{{word.id}}: {{word.word_string}} (en {{ntopics}} tópicos)</h3>
+        <a href="{{previous_item_url('word_id')}}" class="btn-small"> Anterior Palabra </a>
+        <a href="{{next_item_url('word_id')}}" class="btn-small"> Siguiente Palabra </a>
         <p> Dar click en el nombre de la columna, para ordenar los datos según ese campo</p>
 
         {{ table | safe}}
@@ -38,7 +38,7 @@
 
 {% include 'interactive_table_import.html' %}
 
-<script>
+<script> <!-- Para mantener los parametros en el menú de selección -->
     $(document).ready(function() {
         var url = new URL(document.location);
         var params = url.searchParams;

@@ -8,6 +8,15 @@
 
 <h4> Explorar: </h4>
 <p>
+
+  <a href="{{url_for('explore_topic_table', ts_id = ts_id, col1 = 'twdis' ~ twdis.id, topic_id = 0) }}" class="waves-effect waves-light btn orange">
+    Tabla por Tópico
+  </a>
+  <a href="{{url_for('explore_word_table', ts_id = ts_id, col1 = 'twdis' ~ twdis.id, word_id = 0) }}" class="waves-effect waves-light btn orange">
+    Tabla por Palabra
+  </a>
+</p>
+<p>
   <a href="{{url_for('plot_twdis_summary', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn">
     Gráfico Resumen
   </a>
@@ -15,8 +24,9 @@
     Gráfico por Tópico
   </a>
   <a href="{{url_for('dis_twdis_download', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn green">
-    Descargar
+    Descargar TXT
   </a>
+
 </p>
 
 <h4> Descripción:</h4>

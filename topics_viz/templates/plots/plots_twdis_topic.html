@@ -26,7 +26,7 @@
 </p>
 
 <p>
-  <a href="{{url_for('dis_twdis_table', ts_id = ts_id, twdis_id = twdis.id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small red">
+  <a href="{{url_for('explore_topic_table', ts_id = ts_id, topic_id = topic.id, col1 = 'twdis' ~ twdis.id) }}" class="waves-effect waves-light btn-small red">
     Ver Tabla
   </a>
 

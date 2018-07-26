@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1> Palabra #{{word.id}}: {{ word.word_string }} </h1> 
+<h1> Palabra #{{word.id}}: {{ word.word_string }} </h1>
 
 <p>
 <a href="{{url_for('word', ts_id = ts_id, word_id = word.id - 1) }}" class="waves-effect waves-light btn-small">
@@ -9,8 +9,8 @@
 <a href="{{url_for('word', ts_id = ts_id, word_id = word.id + 1) }}" class="waves-effect waves-light btn-small">
     Siguiente Palabra
 </a>
-<a href="{{url_for('word_distributions', ts_id = ts_id, word_id =  word.id) }}" class="waves-effect waves-light btn-small orange darken-4">
-    Ver Distribuciones de esta palabra
+<a href="{{url_for('explore_word_table', ts_id = ts_id, word_id =  word.id, col1 = 'wnum') }}" class="waves-effect waves-light btn-small orange darken-4">
+    Explorar Distribuciones
 </a>
 </p>
 
@@ -19,7 +19,7 @@
 
 <h5 class= "center-align">
     {% for elem in topics_associations %}
-        <a href="{{url_for('topic', ts_id = ts_id, topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> - 
+        <a href="{{url_for('topic', ts_id = ts_id, topic_id = elem.topic_id)}}"> Topico #{{ elem.topic_id }}</a> -
     {% endfor %}
 
 </h5>

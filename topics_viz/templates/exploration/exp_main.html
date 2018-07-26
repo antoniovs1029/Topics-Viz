@@ -4,9 +4,12 @@
 <h1>Exploración de datos</h1>
 *Aquí irán varias maneras de explorar los datos subidos sobre Tópicos, Palabras y Documentos, dentro del contexto del topic-set.*
 
-
+<p>
 <a href="{{url_for('explore_topic_table', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
   Tabla x Tópico
 </a>
-
+<a href="{{url_for('explore_word_table', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
+  Tabla x Palabra
+</a>
+</p>
 {% endblock content %}
