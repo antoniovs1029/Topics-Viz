@@ -1,0 +1,75 @@
+{% block head %}
+{% include 'plots/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block outside_content %}
+
+<div class="row">
+    <form>
+        <div class="input-field col s3">
+          Ir a tópico número:
+          <input type="number" name="topic_id" value="{{topic.id}}"/>
+            <h5>SELECCIONAR DATOS </h5>
+            {% for i in range(col_num) %}
+                Datos #{{ i + 1}}:
+                <select id="col{{i + 1}}" name="col{{i + 1}}" class="browser-default">
+                    <option value="None" selected>No usar</option>
+                    <optgroup label="Dis. Palabras">
+                        <option value="tnum">Número de Tópicos</option>
+                    </optgroup>
+                    <optgroup label="Dis. Tópico-Palabra">
+                    {% for twdis in twdis_list %}
+                        <option value="twdis{{twdis.id}}">TWDIS#{{twdis.id}} - {{twdis.name}}</option>
+                    {% endfor %}
+                    </optgroup>
+                </select>
+            {% endfor %}
+
+            <h5>ORDENAR POR:</h5>
+            <select id="order_by" name="order_by" class="browser-default">
+              <option value="WORD_ID" selected>Word ID</option>
+              {% for i in range(col_num) %}
+                <option value="COL_{{i + 1}}">Datos #{{i + 1}}</option>
+              {% endfor %}
+            </select>
+
+            <input type="submit" value="Submit" class="btn">
+        </div>
+    </form>
+
+    <div class="col s9">
+        <h3>Tópico #{{topic.id}} ({{topic.nwords}} Palabras)</h3>
+        <a href="{{previous_item_url('topic_id')}}" class="btn-small"> Anterior Tópico </a>
+        <a href="{{next_item_url('topic_id')}}" class="btn-small"> Siguiente Tópico </a>
+        <p>Panorama: </p>
+        {{ div | safe}}
+
+        <p>Diagrama de Barras completo:</p>
+        {{ div2 | safe}}
+      </div>
+</div>
+
+{{ script|safe }}
+
+{% include 'interactive_table_import.html' %}
+
+<script>
+    $(document).ready(function() {
+        var url = new URL(document.location);
+        var params = url.searchParams;
+
+        var i;
+        for(i = 1; i <= {{col_num}}; i++){
+           var v = params.get("col" + i);
+           $("#col" + i).val(v);
+        }
+
+        var v = params.get("order_by");
+        if(v != null){
+        $("#order_by").val(v)
+       }
+});
+</script>
+
+{% endblock outside_content %}

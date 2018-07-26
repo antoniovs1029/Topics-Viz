@@ -6,6 +6,9 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource
 from bokeh.io import show
+from bokeh.core.properties import value
+from bokeh.transform import dodge
+
 
 import numpy as np
 from sqlalchemy import func
@@ -357,3 +360,63 @@ def tddis_topic(ts_id, tddis_id, topic_id):
         )
 
     return panorama1, full
+
+def plot_panorama(data, columns, legends, colors, x_axis_label = "Elementos", y_axis_label = "Valores"):
+    """
+    data: un dataframe de pandas con los datos a plotear. Debe tener una columna llamada "ROW_ID"
+    que indique el orden en que deberán ser plotados los elementos.
+
+    columns: lista con las cadenas con los nombres de las columnas a plotear
+
+    colors: lista de strings, que deberá ser mínimo del tamaño de 'columns',
+    indicando colores a usar para plotear
+
+    x_axis_label y y_axis_label las etiquetas del plot.
+
+    colors es una lista con 'n' cadenas, donde las cadenas representan los colores
+    de las lineas.
+
+    La implementación actual solo tiene 5 colores para las líneas,
+    (por tanto, 'n' deberá ser máximo 5)
+    """
+
+    panorama = figure(plot_height = 200, plot_width = 600,
+        x_axis_label = x_axis_label,
+        y_axis_label = y_axis_label,
+        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
+        toolbar_location = "above",
+        x_range=[-2, data.shape[0]]
+        )
+
+    for i, column in enumerate(columns):
+        panorama.line(source = data, x = 'ROW_ID', y = column, legend = value(legends[i]), line_color = colors[i])
+
+    return panorama
+
+def plot_hbars(data, columns, legends, colors, tooltips = [], x_axis_label = "Valores", y_axis_label = "Elementos"):
+    p = figure(
+        y_range = data['WORD'][::-1], #@TODO: Pasar como parametro que columna se tomará como categórica
+        plot_width = 600,
+        plot_height = max(len(data)*15*len(columns), 300),
+        x_axis_label = x_axis_label,
+        y_axis_label = y_axis_label,
+        tools="ypan, ywheel_zoom, ywheel_pan, box_zoom, reset, save",
+        tooltips= tooltips
+        )
+
+    dodging_factor = 1 / (2*len(columns)) #@TODO: Quizás no sea la mejor manera de hacer esto
+    dodging = 0 - dodging_factor*len(columns)/2
+    for i, column in enumerate(columns):
+        p.hbar(
+            source = data,
+            y = dodge('WORD', dodging, range=p.y_range),
+            right = column,
+            height= (1 - .1)/len(columns),
+            color = colors[i],
+            legend = value(legends[i])
+            )
+        dodging += dodging_factor
+
+    p.y_range.range_padding = 0.1
+
+    return p

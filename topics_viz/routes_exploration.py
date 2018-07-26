@@ -1,8 +1,18 @@
+"""
+@TODO: Separar la obtención de datos a otro modulo, donde se obtengan los
+datos y quizás se use un dataframe de pandas para almacenarlos (usando
+la función .read_sql)
+"""
+
 from topics_viz import app, db
 from flask import render_template, url_for, redirect, request, Response
 from topics_viz.models import *
 from topics_viz.models_distributions import *
 from topics_viz.templates_python import create_HTML_table
+import topics_viz.plots as plotter
+
+from bokeh.embed import components
+import pandas as pd
 
 from werkzeug.urls import url_encode
 
@@ -64,6 +74,93 @@ def explore_topic_table(ts_id):
     return render_template('exploration/exp_topic_table.html',
         title = "Explorar Tópicos", ts_id = tset.id, topic = t,
         col_num = col_num, twdis_list = twdis_list, table = table)
+
+@app.route("/ts<int:ts_id>/exploration/topic_graph")
+def explore_topic_graph(ts_id):
+    """
+    @TODO: Hay un bug cuando se grafica un topico de 300 palabras, con 5
+    columnas seleccionadas, y no se muestran todas las barras por alguna razón.
+    Pero por alguna razón sí aparecen todos los tooltips.
+    """
+    col_num = 5
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    topic_id = request.args.get('topic_id', 0, type=int)
+    t = Topic.query.filter_by(topicset_id = ts_id, id = topic_id).one()
+
+    # CONSTRUYENDO LA TABLA
+    table_elements = dict()
+    table_headings = ['WORD_ID', 'WORD']
+    for word_assoc in t.words:
+        table_elements[word_assoc.word.id] = list()
+        table_elements[word_assoc.word.id].append(word_assoc.word_id)
+        table_elements[word_assoc.word.id].append(word_assoc.word.word_string)
+
+    plot_columns = []
+    columns_names = []
+    for c in range(1, col_num + 1):
+        opt = request.args.get('col' + str(c), "None", type=str)
+        if opt ==  "tnum":
+            table_headings.append('COL_' + str(c)) # es necesario renombrar las columnas, pues si dos columnas (distribuciones) se llamaran igual, habria problemas en el ploteo
+            plot_columns.append('COL_' + str(c))
+            columns_names.append("#" + str(c) + ": # Tópicos")
+
+            for word_assoc in t.words:
+                ntopics = db.session.query(WordTopicsNumber)\
+                .filter(WordTopicsNumber.topicset_id == tset.id)\
+                .filter(WordTopicsNumber.word_id == word_assoc.word.id)\
+                .one().ntopics
+
+                table_elements[word_assoc.word.id].append(int(ntopics))
+
+        elif opt[:5] == "twdis":
+            twdis_id = int(opt[5:])
+            twdis = TopicWordDistribution.query.filter_by(topicset_id = ts_id).filter_by(id = twdis_id).one()
+            table_headings.append('COL_' + str(c))
+            plot_columns.append('COL_' + str(c))
+            columns_names.append("#" + str(c) + ": " + twdis.name)
+
+            q = TopicWordValue.query.filter_by(topicset_id = ts_id).filter_by(twdis_id = twdis_id).filter_by(topic_id = t.id)
+            for elem in q:
+                table_elements[elem.word_id].append(elem.value)
+
+    data = pd.DataFrame.from_dict(table_elements, orient='index', columns= table_headings)
+
+    order_by = request.args.get('order_by', "WORD_ID", type=str)
+    print(order_by)
+    data = data.sort_values([order_by], ascending = False)
+    print(data)
+    data['ROW_ID'] = range(1, len(data) + 1)
+    #print(data)
+
+    plot_label = "Palabras (ordenadas por "
+    if order_by == "WORD_ID":
+        plot_label += " Word ID)"
+    else:
+        plot_label += "Datos #" + order_by[4:] + ")"
+
+    colors = ["blue", "red", "green", "black", "pink"] # en la implementacion actual solo se consideran maximo 5 columnas (y cinco colores)
+    tooltips = [("Word ID", "@WORD_ID"), ("Word:", "@WORD")]
+    for i, column in enumerate(plot_columns):
+        tt = (columns_names[i], "@" + column)
+        tooltips.append(tt)
+    if plot_columns:
+        panorama = plotter.plot_panorama(data, plot_columns, columns_names, colors, x_axis_label = plot_label, y_axis_label = "Valor")
+        hbar = plotter.plot_hbars(data, plot_columns, columns_names, colors, tooltips = tooltips, x_axis_label = "Valores", y_axis_label = plot_label)
+        script, div = components((panorama, hbar))
+    else:
+        div = "<p>Escoger los datos a mostrar en el panel derecho</p>"
+        script = "<p></p>"
+
+    # PARA EL MENU
+    twdis_list = TopicWordDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicWordDistribution.id)
+
+    return render_template('exploration/exp_topic_graph.html',
+        title = "Explorar Tópicos", ts_id = tset.id, topic = t,
+        col_num = col_num, twdis_list = twdis_list, table = None,
+        script = script, div = div[0], div2 = div[1])
+
 
 @app.route("/ts<int:ts_id>/exploration/word_table")
 def explore_word_table(ts_id):
