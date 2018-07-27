@@ -65,13 +65,6 @@ def topics_all(ts_id):
 
     return render_template('topics_all.html', title="Topicos", ts_id = tset.id, tnum = len(table_elements), table = table)
 
-"""
-@app.route("/topics_all")
-def topics_all():
-    topic_list = Topic.query.all()
-    return render_template('topics_all.html', title="Topicos", tnum = len(topic_list), topic_list = topic_list)
-"""
-
 @app.route("/ts<int:ts_id>/topic/<int:topic_id>")
 def topic(ts_id, topic_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
@@ -97,25 +90,6 @@ def word(ts_id, word_id):
         .all()
 
     return render_template('word.html', title = w.word_string, ts_id = tset.id, word = w, topics_associations = topics_associations)
-
-@app.route("/ts<int:ts_id>/word/<int:word_id>/distributions")
-def word_distributions(ts_id, word_id):
-    w = Word.query.filter_by(id=word_id).one() # Para asegurar primero que la palabra exista
-    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
-    q = TopicWordDistribution.query.filter_by(topicset_id = tset.id).order_by(TopicWordDistribution.id)
-
-    twdis_list = []
-    twdisvalues_list = []
-    for twdis in q:
-        twdis_list.append(twdis)
-        twdisvalues = TopicWordValue.query.filter_by(topicset_id = tset.id)\
-            .filter_by(twdis_id = twdis.id)\
-            .filter_by(word_id = w.id)\
-            .order_by(TopicWordValue.twdis_id).all()
-        twdisvalues_list.append(twdisvalues)
-
-    return render_template('word_distributions.html', title = w.word_string, ts_id = tset.id, word = w,
-        twdis_list = twdis_list, twdisvalues_list = twdisvalues_list)
 
 @app.route("/ts<int:ts_id>/vocabulary")
 def vocabulary(ts_id):
@@ -151,14 +125,6 @@ def vocabulary_all(ts_id):
     table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
 
     return render_template('vocabulary_all.html', title= "Vocabulario", ts_id = tset.id, wnum = len(table_elements), table = table)
-
-"""
-@app.route("/vocabulary_all")
-def vocabulary_all():
-    word_list = Word.query.order_by(Word.id)
-    wnum = word_list.count()
-    return render_template('vocabulary_all.html', title= "Vocabulario", wnum = wnum, word_list = word_list)
-"""
 
 @app.route("/ts<int:ts_id>/documents")
 def documents(ts_id):

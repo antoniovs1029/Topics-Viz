@@ -4,6 +4,8 @@
 <div class="row">
     <form>
         <div class="input-field col s3">
+            Ir a palabra número:
+            <input type="number" name="word_id" value="{{word.id}}"/>
             <h5>Seleccionar</h5>
             {% for i in range(col_num) %}
                 Columna #{{ i + 1}}:
@@ -19,8 +21,6 @@
                     </optgroup>
                 </select>
             {% endfor %}
-            Ir a palabra número:
-            <input type="number" name="word_id" value="{{word.id}}"/>
             <input type="submit" value="Submit" class="btn">
         </div>
     </form>
@@ -36,7 +36,7 @@
 </div>
 
 
-{% include 'interactive_table_import.html' %}
+{% include 'templates_helpers/interactive_table_import.html' %}
 
 <script> <!-- Para mantener los parametros en el menú de selección -->
     $(document).ready(function() {

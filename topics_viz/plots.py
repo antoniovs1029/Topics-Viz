@@ -1,3 +1,8 @@
+"""
+@TODO: Que en los plots no se hagan queries, sino que se pasen datos (quizas
+en forma de dataframe de pandas) y luego se hagan los plots.
+"""
+
 from topics_viz import app, db
 from topics_viz.models import *
 from topics_viz.models_distributions import *
@@ -197,54 +202,6 @@ def twdis_summary(ts_id, twdis_id):
     p2.line(ids, nwords, line_color="black")
 
     return p, p2
-
-def twdis_topic(ts_id, twdis_id, topic_id):
-    """
-    """
-    ids = []
-    words = []
-    values = []
-
-    q = db.session.query(TopicWordValue)\
-        .filter(TopicWordValue.topicset_id == ts_id)\
-        .filter(TopicWordValue.twdis_id == twdis_id)\
-        .filter(TopicWordValue.topic_id == topic_id)\
-        .order_by(TopicWordValue.word_id)
-
-    for i, elem in enumerate(q):
-        ids.append(i)
-        words.append(Word.query.filter_by(id = elem.word_id).one().word_string)
-        values.append(elem.value)
-
-    panorama = figure(plot_height = 200, plot_width = 600,
-        x_axis_label = 'Palabras (ordenadas por ID)',
-        y_axis_label = 'Valor',
-        tools="xpan, xwheel_zoom, xwheel_pan, box_zoom, reset, save",
-        toolbar_location = "above",
-        x_range=[-2,len(ids)]
-        )
-
-    panorama.line(ids, values)
-
-    data = {'id': ids, 'word': words, 'value': values}
-
-    full = figure(
-        y_range= words,
-        plot_width=600,
-        x_axis_label = "Valor",
-        y_axis_label ="Palabras (ordenadas por ID)",
-        tools="ypan, ywheel_zoom, ywheel_pan, box_zoom, reset, save",
-        tooltips=[("Palabra", "@word"), ("Valor", "@value"), ("ID", "@id")]
-        )
-
-    full.hbar(
-        source = data,
-        y = 'word',
-        right = 'value',
-        height=0.5
-        )
-
-    return panorama, full
 
 def tddis_summary(ts_id, tddis_id):
     """

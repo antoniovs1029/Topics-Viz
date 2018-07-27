@@ -31,21 +31,7 @@
         <p> {{tddis.description}} </p>
         <p>
           <a href="{{url_for('dis_tddis', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn blue">
-            Info
-          </a>
-
-          <a href="{{url_for('dis_tddis_table', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn orange">
-            Tabla por Tópico
-          </a>
-
-          <a href="{{url_for('plot_tddis_summary', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn">
-            Gráfico Resumen
-          </a>
-          <a href="{{url_for('plot_tddis_topic', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn">
-            Gráfico por Tópico
-          </a>
-          <a href="{{url_for('dis_tddis_download', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn green">
-            Descargar TXT
+            Info. y Opciones
           </a>
         </p>
       </li>

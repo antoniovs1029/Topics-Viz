@@ -4,6 +4,7 @@ from topics_viz.models import *
 from topics_viz.models_distributions import *
 from topics_viz.templates_python import create_HTML_table
 
+#### Menú principal de distribuciones
 @app.route("/ts<int:ts_id>/distributions")
 def distributions(ts_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
@@ -13,6 +14,8 @@ def distributions(ts_id):
         title = "Distribuciones", ts_id = tset.id,
         twdis_list = twdis_list, tddis_list = tddis_list)
 
+###### Distribuciones Tópico-Palabra (TopicWordDistribution, twdis)
+###################################################################
 @app.route("/ts<int:ts_id>/distributions/twdis<int:twdis_id>")
 def dis_twdis(ts_id, twdis_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
@@ -44,6 +47,8 @@ def dis_twdis_download(ts_id, twdis_id):
     f+= "</pre>"
     return Response(f, 'text/html')
 
+###### Distribuciones Tópico-Documento (TopicDocumentDistribution, tddis)
+###################################################################
 @app.route("/ts<int:ts_id>/distributions/tddis<int:tddis_id>")
 def dis_tddis(ts_id, tddis_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
@@ -52,31 +57,6 @@ def dis_tddis(ts_id, tddis_id):
         .filter(TopicDocumentDistribution.id == tddis_id).one()
 
     return render_template('distributions/dis_td.html', ts_id = tset.id, tddis = tddis)
-
-@app.route("/ts<int:ts_id>/distributions/tddis<int:tddis_id>/table/topic<int:topic_id>")
-def dis_tddis_table(ts_id, tddis_id, topic_id):
-    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
-    tddis = db.session.query(TopicDocumentDistribution)\
-        .filter(TopicDocumentDistribution.topicset_id == tset.id)\
-        .filter(TopicDocumentDistribution.id == tddis_id).one()
-    t = Topic.query.filter_by(topicset_id = ts_id).filter_by(id = topic_id).one()
-
-    table_elements = dict()
-    table_headings = ['ID', 'Titulo', tddis.name]
-    q = TopicDocumentValue.query.filter_by(topicset_id = tset.id)\
-        .filter_by(tddis_id = tddis.id, topic_id = topic_id)
-
-    for elem in q:
-        table_elements[elem.document_id] = list()
-        table_elements[elem.document_id].append(str(elem.document_id))
-        doc = db.session.query(Document).filter(Document.id == elem.document_id).one()
-        table_elements[elem.document_id].append(doc.title)
-        table_elements[elem.document_id].append("{:.4f}".format(elem.value))
-
-    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
-
-    return render_template('distributions/dis_td_table.html', ts_id = tset.id,
-        tddis = tddis, topic = t, table = table, dnum = len(table_elements))
 
 @app.route("/ts<int:ts_id>/distributions/tddis<int:tddis_id>/download")
 def dis_tddis_download(ts_id, tddis_id):

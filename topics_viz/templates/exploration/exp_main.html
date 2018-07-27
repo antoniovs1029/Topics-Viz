@@ -2,18 +2,46 @@
 {% block content %}
 
 <h1>Exploración de datos</h1>
-*Aquí irán varias maneras de explorar los datos subidos sobre Tópicos, Palabras y Documentos, dentro del contexto del topic-set.*
 
+<h5>Sobre este topic set:</h5>
 <p>
-<a href="{{url_for('explore_topic_table', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
-  Tabla x Tópico
-</a>
-<a href="{{url_for('explore_word_table', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
-  Tabla x Palabra
-</a>
+  <a href="{{url_for('plot_topics_nwords', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
+    Gráfico Resumen: Tópicos - # Palabras
+  </a>
+  <a href="{{url_for('plot_words_ntopics', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
+    Gráfico Resumen: Palabras - # Tópicos
+  </a>
 </p>
 
-<a href="{{url_for('explore_topic_graph', ts_id = ts_id, col1 = 'tnum') }}" class="waves-effect waves-light btn blue">
-  Gráfico x Tópico
+<h5>Distribuciones Tópico-Palabra</h5>
+<p>
+<a href="{{url_for('explore_topic_table', ts_id = ts_id) }}" class="waves-effect waves-light btn orange">
+  Tabla por Tópico
 </a>
+<a href="{{url_for('explore_word_table', ts_id = ts_id) }}" class="waves-effect waves-light btn orange">
+  Tabla por Palabra
+</a>
+
+<a href="{{url_for('explore_topic_graph', ts_id = ts_id, col1 = 'tnum') }}" class="waves-effect waves-light btn">
+  Gráfico por Tópico
+</a>
+
+<a href="{{url_for('explore_twdis_summary', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
+  Gráfico Resumen
+</a>
+
+<h5>Distribuciones Tópico-Documento</h5>
+<p>
+  <a href="{{url_for('explore_tddis_topic_table', ts_id = ts_id) }}" class="waves-effect waves-light btn orange">
+    Tabla por Tópico
+  </a>
+
+  <a href="{{url_for('explore_tddis_topic_graph', ts_id = ts_id) }}" class="waves-effect waves-light btn">
+    Gráfico por Tópico
+  </a>
+
+  <a href="{{url_for('explore_tddis_summary', ts_id = ts_id) }}" class="waves-effect waves-light btn blue">
+    Gráfico Resumen
+  </a>
+</p>
 {% endblock content %}

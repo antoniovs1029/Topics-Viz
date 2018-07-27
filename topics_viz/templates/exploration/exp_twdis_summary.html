@@ -1,0 +1,57 @@
+{% block head %}
+{% include 'templates_helpers/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block outside_content %}
+<div class="row" >
+  <div class="col s1">
+  </div>
+  <form>
+    <div class="input-field col s3">
+      Ir a la Distribución Tópico-Palabra:
+      <select id="twdis_id" name="twdis_id" class="browser-default">
+          {% for twdis in twdis_list %}
+              <option value="{{twdis.id}}">#{{twdis.id}} - {{twdis.name}}</option>
+          {% endfor %}
+      </select>
+      <input type="submit" value="Submit" class="btn">
+    </div>
+  </form>
+  <div class="col s8">
+  {% if message %}
+    <p> {{message}} </p>
+  {% else %}
+    <h3>Resumen: "{{twdis.name}}"</h3>
+    <p>
+      <a href="{{url_for('dis_twdis', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn-small blue">
+        Info de la Distribución
+      </a>
+    </p>
+
+    <p>A continuación se grafica el máximo, mínimo y promedio de la distribución "{{twdis.name}}" en cada tópico:</p>
+    {{ div|safe }}
+
+    <p>Como referencia, a continuación se grafica el número de palabras que cada tópico tiene: </p>
+    {{div2 | safe}}
+
+    {{ script|safe }}
+
+  {% endif %}
+  </div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+
+<script>
+    $(document).ready(function() {
+        var url = new URL(document.location);
+        var params = url.searchParams;
+
+        var v = params.get("twdis_id");
+        if(v != null){
+        $("#twdis_id").val(v)
+       }
+});
+</script>
+{% endblock outside_content %}

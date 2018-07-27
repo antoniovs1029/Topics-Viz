@@ -17,10 +17,10 @@
   </a>
 </p>
 <p>
-  <a href="{{url_for('plot_twdis_summary', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn">
+  <a href="{{url_for('explore_twdis_summary', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn">
     Gráfico Resumen
   </a>
-  <a href="{{url_for('plot_twdis_topic', ts_id = ts_id, twdis_id = twdis.id, topic_id = 0) }}" class="waves-effect waves-light btn">
+  <a href="{{url_for('explore_topic_graph', ts_id = ts_id, topic_id = 0, col1 = 'twdis' ~ twdis.id, order_by = 'COL_1') }}" class="waves-effect waves-light btn">
     Gráfico por Tópico
   </a>
   <a href="{{url_for('dis_twdis_download', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn green">

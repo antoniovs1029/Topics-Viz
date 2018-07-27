@@ -8,6 +8,19 @@
 
 <h4> Explorar: </h4>
 <p>
+  <a href="{{url_for('explore_tddis_topic_table', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn orange">
+    Tabla por Tópico
+  </a>
+
+  <a href="{{url_for('explore_tddis_summary', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn">
+    Gráfico Resumen
+  </a>
+  <a href="{{url_for('explore_tddis_topic_graph', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn">
+    Gráfico por Tópico
+  </a>
+  <a href="{{url_for('dis_tddis_download', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn green">
+    Descargar TXT
+  </a>
 </p>
 
 <h4> Descripción:</h4>

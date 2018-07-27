@@ -4,6 +4,8 @@
 <div class="row">
     <form>
         <div class="input-field col s3">
+            Ir a tópico número:
+            <input type="number" name="topic_id" value="{{topic.id}}"/>
             <h5>Seleccionar</h5>
             {% for i in range(col_num) %}
                 Columna #{{ i + 1}}:
@@ -19,8 +21,6 @@
                     </optgroup>
                 </select>
             {% endfor %}
-            Ir a tópico número:
-            <input type="number" name="topic_id" value="{{topic.id}}"/>
             <input type="submit" value="Submit" class="btn">
         </div>
     </form>
@@ -29,6 +29,7 @@
         <h3>Tópico #{{topic.id}} ({{topic.nwords}} Palabras)</h3>
         <a href="{{previous_item_url('topic_id')}}" class="btn-small"> Anterior Tópico </a>
         <a href="{{next_item_url('topic_id')}}" class="btn-small"> Siguiente Tópico </a>
+        <a href="{{url_for('explore_topic_graph', ts_id = ts_id)}}?{{request.query_string.decode()}}" class="btn-small red"> Ver Gráfica </a>
         <p> Dar click en el nombre de la columna, para ordenar los datos según ese campo</p>
 
         {{ table | safe}}
@@ -36,7 +37,7 @@
 </div>
 
 
-{% include 'interactive_table_import.html' %}
+{% include 'templates_helpers/interactive_table_import.html' %}
 
 <script>
     $(document).ready(function() {

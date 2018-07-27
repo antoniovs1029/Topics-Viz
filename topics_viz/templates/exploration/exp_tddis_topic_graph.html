@@ -1,0 +1,51 @@
+{% block head %}
+{% include 'templates_helpers/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block outside_content %}
+<div class="row">
+  <div class="col s1">
+  </div>
+  <form>
+    <div class="input-field col s3">
+      Ir a tópico número:
+      <input type="number" name="topic_id" value="{{topic.id}}"/>
+      Ir a la Distribución Tópico-Documento:
+      <select id="tddis_id" name="tddis_id" class="browser-default">
+          {% for tddis in tddis_list %}
+              <option value="{{tddis.id}}">#{{tddis.id}} - {{tddis.name}}</option>
+          {% endfor %}
+      </select>
+
+      <input type="submit" value="Submit" class="btn">
+    </div>
+  </form>
+  <div class="col s8">
+  {% if message %}
+    <p>{{message}}</p>
+  {% else %}
+    <h3>Tópico #{{topic.id}} (con {{topic.nwords}} palabras)</h3>
+    <h4>Distribución "{{tddis.name}}"</h4>
+
+    <p>
+      <a href="{{previous_item_url('topic_id')}}" class="btn-small"> Anterior Tópico </a>
+      <a href="{{next_item_url('topic_id')}}" class="btn-small"> Siguiente Tópico </a>
+      <a href="{{url_for('explore_tddis_topic_table', ts_id = ts_id)}}?{{request.query_string.decode()}}" class="btn-small red"> Ver tabla </a>
+      <a href="{{url_for('topic', ts_id = ts_id, topic_id = topic.id) }}" class="waves-effect waves-light btn-small green">
+        Ir al tópico
+      </a>
+    </p>
+
+    <p> Panorama de la distribución en este tópico: </p>
+    {{ div|safe }}
+
+    <p> Gráfica completa de la distribución en este tópico: </p>
+    {{ div2|safe }}
+
+    {{ script|safe }}
+  {% endif %}
+  </div>
+</div>
+
+{% endblock outside_content %}

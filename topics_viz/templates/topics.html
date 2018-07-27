@@ -4,7 +4,7 @@
     Hay {{ results.total }} tópicos. Se muestran {{ results.items.__len__() }} tópicos en esta página. Dar click <a href = {{ url_for('topics_all', ts_id = ts_id) }} > aqui </a> para ver una página que enlista todos los tópicos (puede demorar en cargar).
 
     {% with content_2_link='topics' %}
-      {% include 'page_nav.html' %}
+      {% include 'templates_helpers/page_nav.html' %}
     {% endwith %}
 
     <ul class="collection">

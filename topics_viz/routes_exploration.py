@@ -16,12 +16,36 @@ import pandas as pd
 
 from werkzeug.urls import url_encode
 
+###### Menú principal de explorations
+###################################################################
 @app.route("/ts<int:ts_id>/exploration")
 def exploration(ts_id):
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
     return render_template('exploration/exp_main.html',
         title = "Explore", ts_id = tset.id)
 
+###### Sobre # de tópicos y # de palabras
+###################################################################
+@app.route("/ts<int:ts_id>/exploration/plots_topics_nwords")
+def plot_topics_nwords(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    p = plotter.topicid_nwords_vbar(ts_id)
+    p2 = plotter.topics_nwords_histogram(ts_id)
+    script, div = components((p, p2))
+    return render_template('exploration/plots_topics-nwords.html', ts_id = ts_id,
+        script = script, div = div[0], div2 = div[1])
+
+@app.route("/ts<int:ts_id>/exploration/plots_words_ntopics")
+def plot_words_ntopics(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    p = plotter.wordid_ntopics_vbar(ts_id)
+    p2 = plotter.words_ntopics_histogram(ts_id)
+    script, div = components((p, p2))
+    return render_template('exploration/plots_words-ntopics.html', ts_id = ts_id,
+        script = script, div = div[0], div2 = div[1])
+
+###### Distribuciones Tópico-Palabra (TopicWordDistribution, twdis)
+###################################################################
 @app.route("/ts<int:ts_id>/exploration/topic_table")
 def explore_topic_table(ts_id):
     """
@@ -87,6 +111,11 @@ def explore_topic_graph(ts_id):
     topic_id = request.args.get('topic_id', 0, type=int)
     t = Topic.query.filter_by(topicset_id = ts_id, id = topic_id).one()
 
+    # PARA EL MENU
+    twdis_list = TopicWordDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicWordDistribution.id)
+
     # CONSTRUYENDO LA TABLA
     table_elements = dict()
     table_headings = ['WORD_ID', 'WORD']
@@ -123,12 +152,15 @@ def explore_topic_graph(ts_id):
             for elem in q:
                 table_elements[elem.word_id].append(elem.value)
 
+    if not plot_columns:
+        return render_template('exploration/exp_topic_graph.html',
+            title = "Explorar Tópicos", ts_id = tset.id, topic = t,
+            col_num = col_num, twdis_list = twdis_list, message= "Escoger los datos a graficar en el panel de la derecha")
+
     data = pd.DataFrame.from_dict(table_elements, orient='index', columns= table_headings)
 
     order_by = request.args.get('order_by', "WORD_ID", type=str)
-    print(order_by)
     data = data.sort_values([order_by], ascending = False)
-    print(data)
     data['ROW_ID'] = range(1, len(data) + 1)
     #print(data)
 
@@ -143,24 +175,15 @@ def explore_topic_graph(ts_id):
     for i, column in enumerate(plot_columns):
         tt = (columns_names[i], "@" + column)
         tooltips.append(tt)
-    if plot_columns:
-        panorama = plotter.plot_panorama(data, plot_columns, columns_names, colors, x_axis_label = plot_label, y_axis_label = "Valor")
-        hbar = plotter.plot_hbars(data, plot_columns, columns_names, colors, tooltips = tooltips, x_axis_label = "Valores", y_axis_label = plot_label)
-        script, div = components((panorama, hbar))
-    else:
-        div = "<p>Escoger los datos a mostrar en el panel derecho</p>"
-        script = "<p></p>"
 
-    # PARA EL MENU
-    twdis_list = TopicWordDistribution.query\
-        .filter_by(topicset_id = tset.id)\
-        .order_by(TopicWordDistribution.id)
+    panorama = plotter.plot_panorama(data, plot_columns, columns_names, colors, x_axis_label = plot_label, y_axis_label = "Valor")
+    hbar = plotter.plot_hbars(data, plot_columns, columns_names, colors, tooltips = tooltips, x_axis_label = "Valores", y_axis_label = plot_label)
+    script, div = components((panorama, hbar))
 
     return render_template('exploration/exp_topic_graph.html',
         title = "Explorar Tópicos", ts_id = tset.id, topic = t,
         col_num = col_num, twdis_list = twdis_list, table = None,
         script = script, div = div[0], div2 = div[1])
-
 
 @app.route("/ts<int:ts_id>/exploration/word_table")
 def explore_word_table(ts_id):
@@ -210,10 +233,121 @@ def explore_word_table(ts_id):
             title = "Explorar Palabras", ts_id = tset.id, word = word, ntopics = ntopics,
             col_num = col_num, twdis_list = twdis_list, table = table)
 
-#########################################
+@app.route("/ts<int:ts_id>/exploration/twdis_summary")
+def explore_twdis_summary(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
+    twdis_id = request.args.get('twdis_id', -1, type=int)
+    twdis_list = TopicWordDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicWordDistribution.id)
+
+    if twdis_id == -1:
+        return render_template('exploration/exp_twdis_summary.html', ts_id = ts_id,
+            message = "Escoger la distribución en el panel izquierdo", twdis_list = twdis_list)
+
+    twdis = db.session.query(TopicWordDistribution)\
+        .filter(TopicWordDistribution.topicset_id == tset.id)\
+        .filter(TopicWordDistribution.id == twdis_id).one() # para que si no existe la twdis suceda un error
+
+    p1, p2 = plotter.twdis_summary(ts_id, twdis_id)
+    script, div = components((p1, p2))
+
+    return render_template('exploration/exp_twdis_summary.html', ts_id = ts_id,
+        twdis = twdis, script = script, div = div[0], div2 = div[1], twdis_list = twdis_list)
+
+###### Distribuciones Tópico-Documento (TopicDocumentDistribution, tddis)
+###################################################################
+@app.route("/ts<int:ts_id>/exploration/tddis_topic_table")
+def explore_tddis_topic_table(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    tddis_id = request.args.get('tddis_id', -1, type=int)
+    topic_id = request.args.get('topic_id', 0, type= int)
+    t = Topic.query.filter_by(topicset_id = ts_id).filter_by(id = topic_id).one()
+
+    # PARA EL MENU:
+    tddis_list = TopicDocumentDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicDocumentDistribution.id)
+
+    if tddis_id == -1:
+        return render_template('exploration/exp_tddis_topic_table.html', ts_id = tset.id,
+            topic = t, message = "Escoger distribución en el panel izquierdo",
+            tddis_list = tddis_list)
+
+    tddis = db.session.query(TopicDocumentDistribution)\
+        .filter(TopicDocumentDistribution.topicset_id == tset.id)\
+        .filter(TopicDocumentDistribution.id == tddis_id).one()
+
+    table_elements = dict()
+    table_headings = ['ID', 'Titulo', tddis.name]
+    q = TopicDocumentValue.query.filter_by(topicset_id = tset.id)\
+        .filter_by(tddis_id = tddis.id, topic_id = topic_id)
+
+    for elem in q:
+        table_elements[elem.document_id] = list()
+        table_elements[elem.document_id].append(str(elem.document_id))
+        doc = db.session.query(Document).filter(Document.id == elem.document_id).one()
+        table_elements[elem.document_id].append(doc.title)
+        table_elements[elem.document_id].append("{:.4f}".format(elem.value))
+
+    table = create_HTML_table(table_headings, table_elements, id_attr = "myTable")
+    return render_template('exploration/exp_tddis_topic_table.html', ts_id = tset.id,
+        tddis = tddis, topic = t, table = table, dnum = len(table_elements),
+        tddis_list = tddis_list)
+
+@app.route("/ts<int:ts_id>/exploration/tddis_topic_graph")
+def explore_tddis_topic_graph(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    tddis_id = request.args.get('tddis_id', -1, type=int)
+    topic_id = request.args.get('topic_id', 0, type= int)
+    topic = Topic.query.filter_by(topicset_id = ts_id).filter_by(id = topic_id).one()
+
+    # PARA EL MENU:
+    tddis_list = TopicDocumentDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicDocumentDistribution.id)
+
+    if tddis_id == -1:
+        return render_template('exploration/exp_tddis_topic_graph.html', ts_id = tset.id,
+            topic = topic, message = "Escoger distribución en el panel izquierdo",
+            tddis_list = tddis_list)
+
+    tddis = db.session.query(TopicDocumentDistribution)\
+        .filter(TopicDocumentDistribution.topicset_id == tset.id)\
+        .filter(TopicDocumentDistribution.id == tddis_id).one() # para que si no existe la tddis suceda un error
+
+
+    panorama, full = plotter.tddis_topic(ts_id, tddis_id, topic_id)
+    script, div = components((panorama, full))
+    return render_template('exploration/exp_tddis_topic_graph.html', ts_id = ts_id,
+        tddis = tddis, topic = topic, script = script, div = div[0], div2 = div[1],
+        tddis_list = tddis_list)
+
+@app.route("/ts<int:ts_id>/exploration/tddis_summary")
+def explore_tddis_summary(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    tddis_id = request.args.get('tddis_id', -1, type=int)
+    tddis_list = TopicDocumentDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicDocumentDistribution.id)
+
+    if tddis_id == -1:
+        return render_template('exploration/exp_tddis_summary.html', ts_id = ts_id,
+            message = "Escoger la distribución en el panel izquierdo", tddis_list = tddis_list)
+
+    tddis = db.session.query(TopicDocumentDistribution)\
+        .filter(TopicDocumentDistribution.topicset_id == tset.id)\
+        .filter(TopicDocumentDistribution.id == tddis_id).one() # para que si no existe la twdis suceda un error
+
+    p1, p2, p3 = plotter.tddis_summary(ts_id, tddis_id)
+    script, div = components((p1, p2, p3))
+    return render_template('exploration/exp_tddis_summary.html', ts_id = ts_id,
+        tddis = tddis, script = script, div1 = div[0], div2 = div[1], div3 = div[2], tddis_list = tddis_list)
+
+#############################################################################
 ### Global templates de jinja para hacer que los botones de navegacion
 ### mantengan los parametros del GET request
-#########################################
+############################################################################
 
 @app.template_global()
 def next_item_url(item_id):

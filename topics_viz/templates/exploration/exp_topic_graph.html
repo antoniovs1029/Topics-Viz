@@ -1,5 +1,5 @@
 {% block head %}
-{% include 'plots/bokeh_head_import.html' %}
+{% include 'templates_helpers/bokeh_head_import.html' %}
 {% endblock %}
 
 {% extends "layout.html" %}
@@ -27,13 +27,13 @@
             {% endfor %}
 
             <h5>ORDENAR POR:</h5>
+            (orden descendente)
             <select id="order_by" name="order_by" class="browser-default">
               <option value="WORD_ID" selected>Word ID</option>
               {% for i in range(col_num) %}
                 <option value="COL_{{i + 1}}">Datos #{{i + 1}}</option>
               {% endfor %}
             </select>
-
             <input type="submit" value="Submit" class="btn">
         </div>
     </form>
@@ -42,17 +42,23 @@
         <h3>Tópico #{{topic.id}} ({{topic.nwords}} Palabras)</h3>
         <a href="{{previous_item_url('topic_id')}}" class="btn-small"> Anterior Tópico </a>
         <a href="{{next_item_url('topic_id')}}" class="btn-small"> Siguiente Tópico </a>
+        <a href="{{url_for('explore_topic_table', ts_id = ts_id)}}?{{request.query_string.decode()}}" class="btn-small red"> Ver Tabla </a>
+
+        {% if message %}
+        <p> {{message}} </p>
+        {% else %}
         <p>Panorama: </p>
         {{ div | safe}}
 
         <p>Diagrama de Barras completo:</p>
         {{ div2 | safe}}
+        {% endif %}
       </div>
 </div>
 
 {{ script|safe }}
 
-{% include 'interactive_table_import.html' %}
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
 
 <script>
     $(document).ready(function() {
