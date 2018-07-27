@@ -10,12 +10,12 @@
     Siguiente Palabra
 </a>
 <a href="{{url_for('explore_word_table', ts_id = ts_id, word_id =  word.id, col1 = 'wnum') }}" class="waves-effect waves-light btn-small orange darken-4">
-    Explorar Distribuciones
+    Explorar en tabla
 </a>
 </p>
 
 
-<p class = "center-align"> (en {{ topics_associations | length }} tópicos) </p>
+<p class = "center-align"> (aparece en {{ topics_associations | length }} tópicos) </p>
 
 <h5 class= "center-align">
     {% for elem in topics_associations %}

@@ -19,12 +19,30 @@
 </nav>
 
 <div class="container">
-  <p> {{corpus.description}} </p>
-  <p> A continuación se enlistan los {{topic_sets.count()}} topicsets cargados del corpus.  </p>
+  <h5>¡Bienvenido!</h5>
+  <p>Esta aplicación de flask sirve para poder navegar y visualizar tópicos, así como información relacionada a los mismos.
+
+    Específicamente permite definir distribuciones para los tópicos, las palabras y los documentos de un corpus, a través de archivos ingresados por el usuario, los cuales se convierten automáticamente en diversas tablas, listas y gráficas que permiten al usuario navegar y visualizar toda su información.
+  </p>
+  <p>
+    Todos los datos ingresados por el usuario son guardados en una base de datos (SQLite), por lo que solamente es necesario que el usuario los ingrese una vez, y después estarán siempre disponibles en la aplicación para ser explorados.
+
+    De momento, no se cuenta con una interfaz gráfica para que el usuario ingrese datos, por lo que es necesario que lo haga desde la consola.
+  </p>
+
+  <h5> Corpus: {{corpus.name}}</h5>
+  <p> El corpus de esta instancia de la aplicación es el corpus de {{corpus.name}}. Es posible correr diferentes instancias de la aplicación, utilizando una base de datos diferente en cada instancia; cada base de datos puede contener la información de un corpus diferente.</p>
+
+  <h5>Topic Sets Disponibles</h5>
+  <p> En el contexto de esta aplicación, un topic set es un conjunto de tópicos que resulta de utilizar alguna técnica de minería de tópicos sobre un corpus definido.
+    Diferentes experimentos sobre un corpus, arrojarán diferentes topic sets.
+    Esta aplicación permite cargar diferentes topic sets, para poder explorar cada uno de manera independiente.
+  </p>
+  <p> A continuación se enlistan los {{topic_sets.count()}} topic sets cargados en esta instancia de la aplicación. Dar click en alguno para explorarlo.</p>
 
   <div class="collection">
   {% for ts in topic_sets %}
-        <a class="collection-item" href="{{url_for('topic_set', ts_id = ts.id)}}"> <h5> ID#{{ts.id}}: {{ts.name}} ({{ts.ntopics}} tópicos)</h5>
+        <a class="collection-item" href="{{url_for('topic_set', ts_id = ts.id)}}"> <h5> ID#{{ts.id}}: {{ts.name}} (define {{ts.ntopics}} tópicos)</h5>
         <p> {{ts.description}} </p> </a>
   {% endfor %}
 </div>

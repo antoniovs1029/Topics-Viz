@@ -4,8 +4,14 @@
   Distribuciones
 </h1>
 
+<p>La aplicación permite cargar diferentes distribuciones numéricas para cada topic set.
+  De momento solo se permite ingresar dos tipos de distribuciones: "Distribuciones Tópico-Palabra" y "Distribuciones Tópico-Documento"
+</p>
+
 <div>
   <h3> Distribuciones Tópico-Palabra </h3>
+  <p> Las distribuciones tópico-palabra son distribuciones que asocian un valor numérico a cada palabra de cada tópico. No es necesario que sea una distribución de probabilidad, si no que puede ser cualquier distirbución numérica.</p>
+  <p> A continuación se enlistan las {{twdis_list | length}} distribuciones tópico-palabra almacenadas en este topic set.</p>
 </div>
   <ul class="collection">
   {%  for twdis in twdis_list %}
@@ -16,13 +22,21 @@
         <a href="{{url_for('dis_twdis', ts_id = ts_id, twdis_id = twdis.id) }}" class="waves-effect waves-light btn blue">
           Info. y Opciones
         </a>
+        <a href="{{url_for('explore_topic_table', ts_id = ts_id, col1 = 'twdis' ~ twdis.id, topic_id = 0) }}" class="waves-effect waves-light btn orange">
+          Tabla por Tópico
+        </a>
+        <a href="{{url_for('explore_topic_graph', ts_id = ts_id, topic_id = 0, col1 = 'twdis' ~ twdis.id, order_by = 'COL_1') }}" class="waves-effect waves-light btn">
+          Gráfico por Tópico
+        </a>
       </p>
     </li>
   {% endfor %}
   </ul>
 
   <div>
-    <h3> Distribuciones Tópico-Documento </h3>
+  <h3> Distribuciones Tópico-Documento </h3>
+  <p> Las distribuciones tópico-documento son distribuciones que asocian un valor numérico a la asociación de un documento con un tópico. No es necesario que sea una distribución de probabilidad, si no que puede ser cualquier distirbución numérica.</p>
+  <p> A continuación se enlistan las {{tddis_list | length}} distribuciones tópico-documento almacenadas en este topic set.</p>
   </div>
     <ul class="collection">
     {%  for tddis in tddis_list %}
@@ -32,6 +46,12 @@
         <p>
           <a href="{{url_for('dis_tddis', ts_id = ts_id, tddis_id = tddis.id) }}" class="waves-effect waves-light btn blue">
             Info. y Opciones
+          </a>
+          <a href="{{url_for('explore_tddis_topic_table', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn orange">
+            Tabla por Tópico
+          </a>
+          <a href="{{url_for('explore_tddis_topic_graph', ts_id = ts_id, tddis_id = tddis.id, topic_id = 0) }}" class="waves-effect waves-light btn">
+            Gráfico por Tópico
           </a>
         </p>
       </li>

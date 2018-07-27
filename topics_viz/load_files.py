@@ -18,11 +18,11 @@ def load_word_list(file_path):
         db.session.commit()
 
 def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset_description = "Empty Description", topicdistrib_description = "Empty Description"):
-    tset = TopicSet(name = topicset_name)
+    tset = TopicSet(name = topicset_name, description = topicset_description)
     db.session.add(tset)
     db.session.commit()
 
-    twdis = TopicWordDistribution(id = 0, topicset_id = tset.id, name = distrib_name)
+    twdis = TopicWordDistribution(id = 0, topicset_id = tset.id, name = distrib_name, description = topicdistrib_description)
     db.session.add(twdis)
     db.session.commit()
 
@@ -87,8 +87,8 @@ def load_topics_distrib(file_path, topicset_id, name, description = "Emtpy Descr
 
     print("Cargando distrib", name)
     # twdis_id = db.session.query(TopicWordDistribution).filter(TopicWordDistribution.topicset_id==0).count()
-    twdis_id = db.session.query(TopicWordDistribution).filter(TopicWordDistribution.topicset_id==tset.id).count()
-    twdis = TopicWordDistribution(name = name, id = twdis_id, topicset_id = tset.id)
+    twdis_id = db.session.query(TopicWordDistribution).filter(TopicWordDistribution.topicset_id==tset.id).count() #@TODO: Cambiar esto, pues si se borra alguna distribucion, entonces esto causara colision entre los indices
+    twdis = TopicWordDistribution(name = name, id = twdis_id, topicset_id = tset.id, description = description)
     db.session.add(twdis)
     db.session.commit()
 
