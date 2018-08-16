@@ -1,0 +1,50 @@
+{% block head %}
+{% include 'templates_helpers/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block outside_content %}
+
+<div class="row" >
+	
+	<div class="input-field col s3">
+		<form>
+		  Ir a la Distribución Tópico-Palabra:
+		  <select id="twdis_id" name="twdis_id" class="browser-default">
+			  <option value="-1">Sin Distribución</option>
+		      {% for twdis in twdis_list %}
+		          <option value="{{twdis.id}}">#{{twdis.id}} - {{twdis.name}}</option>
+		      {% endfor %}
+		  </select>
+		  <input type="submit" value="Submit" class="btn">
+		</form>
+	</div>
+
+	<div class="col s8">
+		<h4> "Heatmap" </h4>
+		<p>A continuación se grafica un punto por cada palabra de cada tópico, el color representa el valor de la distribución en ese punto. Si no se ha seleccionado ninguna distribución, el color del punto dependerá del ID del tópico.</p>
+		<p>Se grafican {{npuntos}} puntos</p>
+		{{ div|safe }}
+	</div>
+
+	<div class="col s1">
+	</div>
+</div>
+
+{{ script|safe }}
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+
+<script>
+    $(document).ready(function() {
+        var url = new URL(document.location);
+        var params = url.searchParams;
+
+        var v = params.get("twdis_id");
+        if(v != null){
+        $("#twdis_id").val(v)
+       }
+});
+</script>
+
+{% endblock outside_content %}

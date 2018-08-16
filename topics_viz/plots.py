@@ -9,11 +9,12 @@ from topics_viz.models_distributions import *
 
 from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import ColumnDataSource
 from bokeh.io import show
 from bokeh.core.properties import value
 from bokeh.transform import dodge
-
+from bokeh.models import ColumnDataSource, LinearColorMapper
+from bokeh.models import BasicTicker, PrintfTickFormatter, ColorBar
+from bokeh.palettes import Viridis10
 
 import numpy as np
 from sqlalchemy import func
@@ -375,5 +376,35 @@ def plot_hbars(data, columns, legends, colors, tooltips = [], x_axis_label = "Va
         dodging += dodging_factor
 
     p.y_range.range_padding = 0.1
+
+    return p
+
+def plot_twdis_heatmap(heatmap_data):
+    color_palette = Viridis10.copy()
+    color_palette.reverse()
+    color_mapper = LinearColorMapper(palette=color_palette, low=min(heatmap_data['value']), high=max(heatmap_data['value']))
+
+    data_source = ColumnDataSource(heatmap_data)
+    TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+
+    p = figure(
+                plot_height=500,
+                plot_width=1000,
+                x_axis_label = "ID de Tópico",
+                y_axis_label ="ID de Palabra",
+                tools=TOOLS,
+                tooltips=[("Word ID", "@word_id"), ("Topic ID", "@topic_id"), ("Valor", "@value")]
+                )
+
+    p.scatter(source = data_source,
+        x='topic_id', y='word_id',
+        size= 3.5,
+        fill_color = {'field': 'value', 'transform': color_mapper},
+        line_color = None)
+
+    color_bar = ColorBar(color_mapper=color_mapper, major_label_text_font_size="5pt",
+                     ticker=BasicTicker(desired_num_ticks=len(color_palette)),
+                     label_standoff=6, border_line_color=None, location=(0, 0))
+    p.add_layout(color_bar, 'right')
 
     return p

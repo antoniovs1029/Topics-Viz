@@ -11,6 +11,8 @@ from topics_viz.models_distributions import *
 from topics_viz.templates_python import create_HTML_table
 import topics_viz.plots as plotter
 
+import random
+
 from bokeh.embed import components
 import pandas as pd
 
@@ -254,6 +256,50 @@ def explore_twdis_summary(ts_id):
 
     return render_template('exploration/exp_twdis_summary.html', ts_id = ts_id,
         twdis = twdis, script = script, div = div[0], div2 = div[1], twdis_list = twdis_list)
+
+@app.route("/ts<int:ts_id>/exploration/twdis_heatmap")
+def explore_twdis_heatmap(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+    twdis_id = request.args.get('twdis_id', -1, type=int)
+
+    twdis_list = TopicWordDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicWordDistribution.id)
+
+    word_id = []
+    topic_id = []
+    value = []
+    if twdis_id == -1:
+        q = TopicWordAssociation.query.filter_by(topicset_id = tset.id)
+        word_id = []
+        topic_id = []
+
+        for elem in q:
+            word_id.append(elem.word_id)
+            topic_id.append(elem.topic_id)
+            value.append(elem.topic_id)
+
+        npuntos = q.count()
+    else:
+        twdis = db.session.query(TopicWordDistribution)\
+        .filter(TopicWordDistribution.topicset_id == tset.id)\
+        .filter(TopicWordDistribution.id == twdis_id).one() # para que si no existe la twdis suceda un error
+
+        q = TopicWordValue.query.filter_by(topicset_id = tset.id, twdis_id = twdis.id)
+
+        for elem in q:
+            word_id.append(elem.word_id)
+            topic_id.append(elem.topic_id)
+            value.append(elem.value)
+
+        npuntos = q.count()
+
+    p = plotter.plot_twdis_heatmap({'word_id': word_id, 'topic_id': topic_id, 'value': value})
+
+    script, div = components(p)    
+
+    return render_template('exploration/exp_twdis_heatmap.html', ts_id = ts_id,
+        script = script, div = div, npuntos = npuntos, twdis_list = twdis_list)
 
 ###### Distribuciones Tópico-Documento (TopicDocumentDistribution, tddis)
 ###################################################################
