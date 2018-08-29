@@ -17,7 +17,7 @@ def load_word_list(file_path):
             db.session.add(new_word)
         db.session.commit()
 
-def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset_description = "Empty Description", topicdistrib_description = "Empty Description"):
+def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset_description = "Empty Description", topicdistrib_description = "Empty Description", topicdistrib_normalization_value = None):
     tset = TopicSet(name = topicset_name, description = topicset_description)
     db.session.add(tset)
     db.session.commit()
@@ -26,6 +26,7 @@ def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset
     db.session.add(twdis)
     db.session.commit()
 
+    max_value = 0
     with open(file_path, 'r') as fp:
         for i, line in enumerate(fp):
             print("Cargando topico: ", i)
@@ -40,12 +41,22 @@ def load_topics_set_and_distrib(file_path, topicset_name, distrib_name, topicset
                 new_val = TopicWordValue(topicset_id = tset.id, topic_id = i, word_id = word_id, twdis_id = twdis.id, value = word_val)
                 db.session.add(new_assoc)
                 db.session.add(new_val)
+                if word_val > max_value:
+                    max_value = word_val
 
                 # new_topic.nwords += 1 # No puedo hacer esto pues no he hecho commit del objeto
                 # Word.query.filter_by(id = word_id).one().ntopics += 1 # esto tambien alenta el ciclo... me pregunto si habra alguna manera mas rapida de hacerlo!
 
             if i % 100 == 0:
                 db.session.commit() # @TODO: No se cada cuanto hacerlo. Ya que al hacerlo mas frecuentemente si se tarda mas.
+
+    if topicdistrib_normalization_value:
+        twdis.normalization_value = topicdistrib_normalization_value
+    else:
+        twdis.normalization_value = max_value
+
+    db.session.commit()
+
 
     print("Actualizando Topicos")
     cont = 0
@@ -82,7 +93,7 @@ def _count_topics_for_words(topicset_id):
     db.session.commit()
     pass
 
-def load_topics_distrib(file_path, topicset_id, name, description = "Emtpy Description"):
+def load_topics_distrib(file_path, topicset_id, name, description = "Emtpy Description", normalization_value = None):
     tset = db.session.query(TopicSet).filter(TopicSet.id == topicset_id).one() # para que si no existe el topicset, suceda un error
 
     print("Cargando distrib", name)
@@ -92,6 +103,7 @@ def load_topics_distrib(file_path, topicset_id, name, description = "Emtpy Descr
     db.session.add(twdis)
     db.session.commit()
 
+    max_value = 0
     with open(file_path) as fp:
         for topic_id, line in enumerate(fp):
             for elem in line.split(" ")[1:]:
@@ -99,7 +111,16 @@ def load_topics_distrib(file_path, topicset_id, name, description = "Emtpy Descr
                 word_id = int(word_id)
                 word_val = float(word_val)
                 new_val = TopicWordValue(topicset_id = tset.id, topic_id = topic_id, word_id = word_id, twdis_id = twdis.id, value = word_val)
+                if word_val > max_value:
+                    max_value = word_val
+
                 db.session.add(new_val)
+
+    if normalization_value:
+        twdis.normalization_value = normalization_value
+    else:
+        twdis.normalization_value = max_value
+
     db.session.commit()
 
     # @TODO: Comprobar que la distribucion ingresada sea valida, en que las tuplas (word, topic) que usa realmente sean válidas
