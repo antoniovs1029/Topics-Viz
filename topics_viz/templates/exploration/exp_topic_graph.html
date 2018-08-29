@@ -26,6 +26,13 @@
                 </select>
             {% endfor %}
 
+            <p>
+              <label>
+                <input type="checkbox" id="normalize" name="normalize" class="filled-in" id="cbox1" value="yes" />
+                <span> Normalizar Valores </span>
+              </label>
+            </p>
+
             <h5>ORDENAR POR:</h5>
             (orden descendente)
             <select id="order_by" name="order_by" class="browser-default">
@@ -74,6 +81,11 @@
         var v = params.get("order_by");
         if(v != null){
         $("#order_by").val(v)
+       }
+
+       var v = params.get("normalize");
+        if(v != null){
+        $( "#normalize" ).prop( "checked", true );
        }
 });
 </script>

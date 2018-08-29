@@ -11,6 +11,8 @@ from topics_viz.models_distributions import *
 from topics_viz.templates_python import create_HTML_table
 import topics_viz.plots as plotter
 
+from sqlalchemy import func as sqlfunc
+
 import random
 
 from bokeh.embed import components
@@ -39,6 +41,10 @@ def plot_topics_nwords(ts_id):
 
 @app.route("/ts<int:ts_id>/exploration/plots_words_ntopics")
 def plot_words_ntopics(ts_id):
+    """
+    @TODO: Hay un bug en el histograma. Por alguna razón junta los últimos 2 bins (los bins con el número de tópicos mas grande).
+    Por ejemplo, en el bin de palabras con 6 tópicos pone las palabras con 6 o 7 tópicos (siendo 7 el mayor)
+    """
     tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one() # para que si no existe el topicset, suceda un error
     p = plotter.wordid_ntopics_vbar(ts_id)
     p2 = plotter.words_ntopics_histogram(ts_id)
@@ -126,6 +132,10 @@ def explore_topic_graph(ts_id):
         table_elements[word_assoc.word.id].append(word_assoc.word_id)
         table_elements[word_assoc.word.id].append(word_assoc.word.word_string)
 
+    normalize = False
+    if request.args.get('normalize', "no", type=str) == "yes":
+        normalize = True
+
     plot_columns = []
     columns_names = []
     for c in range(1, col_num + 1):
@@ -135,13 +145,20 @@ def explore_topic_graph(ts_id):
             plot_columns.append('COL_' + str(c))
             columns_names.append("#" + str(c) + ": # Tópicos")
 
+            normalize_factor = 1
+            if normalize :
+                normalize_factor = db.session.query(sqlfunc.max(WordTopicsNumber.ntopics))\
+                                .filter(WordTopicsNumber.topicset_id == tset.id)\
+                                .one()[0]
+
+
             for word_assoc in t.words:
                 ntopics = db.session.query(WordTopicsNumber)\
                 .filter(WordTopicsNumber.topicset_id == tset.id)\
                 .filter(WordTopicsNumber.word_id == word_assoc.word.id)\
                 .one().ntopics
 
-                table_elements[word_assoc.word.id].append(int(ntopics))
+                table_elements[word_assoc.word.id].append(ntopics/normalize_factor)
 
         elif opt[:5] == "twdis":
             twdis_id = int(opt[5:])
@@ -150,9 +167,13 @@ def explore_topic_graph(ts_id):
             plot_columns.append('COL_' + str(c))
             columns_names.append("#" + str(c) + ": " + twdis.name)
 
+            normalize_factor = 1
+            if normalize:
+                normalize_factor = twdis.normalization_value
+
             q = TopicWordValue.query.filter_by(topicset_id = ts_id).filter_by(twdis_id = twdis_id).filter_by(topic_id = t.id)
             for elem in q:
-                table_elements[elem.word_id].append(elem.value)
+                table_elements[elem.word_id].append(elem.value / normalize_factor)
 
     if not plot_columns:
         return render_template('exploration/exp_topic_graph.html',
@@ -178,8 +199,12 @@ def explore_topic_graph(ts_id):
         tt = (columns_names[i], "@" + column)
         tooltips.append(tt)
 
-    panorama = plotter.plot_panorama(data, plot_columns, columns_names, colors, x_axis_label = plot_label, y_axis_label = "Valor")
-    hbar = plotter.plot_hbars(data, plot_columns, columns_names, colors, tooltips = tooltips, x_axis_label = "Valores", y_axis_label = plot_label)
+    y_label = "Valor"
+    if normalize:
+        y_label = "Valor Normalizado"
+
+    panorama = plotter.plot_panorama(data, plot_columns, columns_names, colors, x_axis_label = plot_label, y_axis_label = y_label)
+    hbar = plotter.plot_hbars(data, plot_columns, columns_names, colors, tooltips = tooltips, x_axis_label = y_label, y_axis_label = plot_label)
     script, div = components((panorama, hbar))
 
     return render_template('exploration/exp_topic_graph.html',
