@@ -14,6 +14,7 @@ import topics_viz.plots as plotter
 from sqlalchemy import func as sqlfunc
 
 import random
+from collections import defaultdict
 
 from bokeh.embed import components
 import pandas as pd
@@ -324,6 +325,64 @@ def explore_twdis_heatmap(ts_id):
     script, div = components(p)    
 
     return render_template('exploration/exp_twdis_heatmap.html', ts_id = ts_id,
+        script = script, div = div, npuntos = npuntos, twdis_list = twdis_list)
+
+@app.route("/ts<int:ts_id>/exploration/twdis_correlations")
+def explore_twdis_correlations(ts_id):
+    tset = db.session.query(TopicSet).filter(TopicSet.id == ts_id).one()
+
+    twdis_list = TopicWordDistribution.query\
+        .filter_by(topicset_id = tset.id)\
+        .order_by(TopicWordDistribution.id)
+
+    word_id = []
+    topic_id = []
+    value = []
+
+    d = defaultdict(list)
+
+    q = TopicWordAssociation.query.filter_by(topicset_id = tset.id)
+    for elem in q:
+        d[(elem.topic_id, elem.word_id)].append(elem.topic_id)
+        d[(elem.topic_id, elem.word_id)].append(elem.word_id)
+
+    npuntos = q.count()
+
+    x_axis_id = request.args.get('x', -1, type=int)
+    y_axis_id = request.args.get('y', -2, type=int)
+
+    axis = [x_axis_id, y_axis_id]
+    labels = []
+    for twdis_id in axis:
+        if twdis_id == -1:
+            for k in d.keys(): #@TODO: Quizas esto es mejor hacerlo con un "map" o algo así
+                d[k].append(d[k][0])
+            labels.append("ID. Topico")
+        elif twdis_id == -2:
+            for k in d.keys():
+                d[k].append(d[k][1])
+            labels.append("ID. Palabras")
+        else:
+            twdis = db.session.query(TopicWordDistribution)\
+            .filter(TopicWordDistribution.topicset_id == tset.id)\
+            .filter(TopicWordDistribution.id == twdis_id).one() # para que si no existe la twdis suceda un error
+
+            q = TopicWordValue.query.filter_by(topicset_id = tset.id, twdis_id = twdis.id)
+
+            for elem in q:
+                d[(elem.topic_id), (elem.word_id)].append(elem.value)
+
+            labels.append(twdis.name)
+
+
+    df = pd.DataFrame([ x for x in d.values()],
+        columns=['topic_id', 'word_id', 'x', 'y'])
+
+    p = plotter.plot_twdis_correlations(df, labels)
+
+    script, div = components(p)    
+
+    return render_template('exploration/exp_twdis_correlations.html', ts_id = ts_id,
         script = script, div = div, npuntos = npuntos, twdis_list = twdis_list)
 
 ###### Distribuciones Tópico-Documento (TopicDocumentDistribution, tddis)

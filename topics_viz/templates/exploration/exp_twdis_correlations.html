@@ -1,0 +1,67 @@
+{% block head %}
+{% include 'templates_helpers/bokeh_head_import.html' %}
+{% endblock %}
+
+{% extends "layout.html" %}
+{% block outside_content %}
+
+<div class="row" >
+	
+	<div class="input-field col s3">
+		<form>
+		  Eje X:
+		  <select id="x" name="x" class="browser-default">
+			  <option value="-1">ID. Tópico</option>
+			  <option value="-2">ID. Palabra </option>
+		      {% for twdis in twdis_list %}
+		          <option value="{{twdis.id}}">#{{twdis.id}} - {{twdis.name}}</option>
+		      {% endfor %}
+		  </select>
+		  Eje Y:
+  		  <select id="y" name="y" class="browser-default">
+			  <option value="-1">ID. Tópico</option>
+			  <option value="-2">ID. Palabra </option>
+		      {% for twdis in twdis_list %}
+		          <option value="{{twdis.id}}">#{{twdis.id}} - {{twdis.name}}</option>
+		      {% endfor %}
+		  </select>
+		  <input type="submit" value="Submit" class="btn">
+		</form>
+	</div>
+
+	<div class="col s8">
+		<h4> Correlaciones </h4>
+		<p>A continuación se grafica un punto por cada palabra de cada tópico. Se grafican {{npuntos}} puntos</p>
+		{{ div|safe }}
+	</div>
+
+	<div class="col s1">
+	</div>
+</div>
+
+{{ script|safe }}
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
+
+<script>
+    $(document).ready(function() {
+        var url = new URL(document.location);
+        var params = url.searchParams;
+
+        var v = params.get("x");
+        if(v != null){
+        $("#x").val(v)
+       } else {
+       	$("#x").val(-1)
+       }
+
+        v = params.get("y");
+        if(v != null){
+        $("#y").val(v)
+       }else {
+       	$("#y").val(-2)
+       }
+});
+</script>
+
+{% endblock outside_content %}

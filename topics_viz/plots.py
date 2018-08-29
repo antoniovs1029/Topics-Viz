@@ -408,3 +408,22 @@ def plot_twdis_heatmap(heatmap_data):
     p.add_layout(color_bar, 'right')
 
     return p
+
+def plot_twdis_correlations(data, labels):
+    TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+
+    p = figure(
+                plot_height=500,
+                plot_width=1000,
+                x_axis_label = labels[0],
+                y_axis_label = labels[1],
+                tools=TOOLS,
+                tooltips=[("Word ID", "@word_id"), ("Topic ID", "@topic_id"), ("X", "@x"), ("Y", "@y")]
+                )
+
+    p.scatter(source = data,
+        x='x', y='y',
+        size= 3.5,
+        line_color = None)
+
+    return p
